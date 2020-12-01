@@ -1,7 +1,7 @@
 # Vostok AV GitHub Repository
 This is the repo for the arduino code of the avionic
 
-## Beginner's guide: 
+## Beginner's guide
 
 Github allows members of a project to all work on a same project. To do this, a common repository (repo) is created and stored here. Now
 each person who wants to work on the project will take the current version of the project (called *pulling*) and work on it locally 
@@ -24,13 +24,37 @@ working inside the files. **See the how to use guide**
 ## How to use 
 
 1. Before you start working, make sure you have the last version of the repo. For this, 
-   press shift + right click at the same time and select `git bash here` and type git pull
-   in the console and wait for it to finish.
+   press right click in the folder where you cloned the project (where the *.git* file is) and select *Git Bash Here*. Type in the console 
+   `git pull`. This command might produce some *conflicts* in your code. To solve this, see the trouble shooting section.
+   When done, you can start coding.
 2. Write some code locally on your computer.
-3. When you're done working, got to the file where you cloned the repo and press shift+rightClick
-   and go to open Bash here.
+3. When you're done working, go to the file where you cloned the repo and righ click. Choose *Git Bash Here*.
 4. In the console type : `git commit -am "Your Message"` where your message should briefly descibe what you did
-   this command will prepare the work you did to be sent in the repo and add a little description
-5. Type git push 
+   this command will prepare the work you did to be sent in the github repo and adds a little description.
+5. Type `git push`. This might also produce some conflicts (See the trouble shooting section).
 		
+		
+## Trouble Shooting
+
+*Connection problems*: When cloning, pushing or pulling (or others), you might be asked to connect. If you can't access you're either using the wrong account
+in which case you have to make sure you connect with the account linked to the repo. Otherwise, it most likely means that we made a mistake on our side and forgot
+to give you acces. In this case, contact us (see contact us section)
+
+*Conflicts*: When pushing or pulling, gitBash might warn you or even prevent you from continuing if you don't resolve the conflicts. This can also happen if you didn't pull before 
+starting to code. Conflicts happen when you have modified the same bit of code as someone else and git can't figure out itself what to keep and what to discard. To solve this, go 
+to the concerned file and look for the `<<<<<<<`, `>>>>>>>>` and the `Head` markers which points to the conflicts. Delete the parts you want to keep and make sure before trying 
+to push again that you don't have any of these markers in your code. **Always push after you solved conflicts**.
+
+*Something else*: You've came upon another issue I don't know yet. Don't give up, try first to find a solution by yourself on internet, if you can't contact me (see contacts below).
+I repeat, **try to get it sorted yourself first**. But also, if you're not sure you're about to ruin the whole project, ask me.
+
+
+## Contact us
+
+If you have any problem **you can't solve by yourself** contact one of us either via mail or via slack. The latter is the best and quickest way to get a response. 
+
+> Théo Houle (TL AV Vostok) : theo.houle@epfl.ch 
+> Gaston Wolfart (TL AV Vostok) : gaston.wolfart@epfl.ch 
+
+
 	
