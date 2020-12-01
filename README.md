@@ -9,10 +9,6 @@ each person who wants to work on the project will take the current version of th
 
 First, in order to use github, you need to install gitBash which will allow you to push and pull (amongst other things)
 
-## How to use : 
-1. Before you start working, make sure you have the last version of the repo. For this, 
-   press shift + right click at the same time and select "git bash here" and type git pull
-=======
 ## How to use 
 
 1. Before you start working, make sure you have the last version of the repo. For this, 
