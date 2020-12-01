@@ -1,4 +1,3 @@
-# This is the repo for the arduino code of the avionic
 # Vostok AV GitHub Repository
 This is the repo for the arduino code of the avionic
 
