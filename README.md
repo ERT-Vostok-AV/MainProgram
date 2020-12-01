@@ -36,11 +36,11 @@ working inside the files. **See the how to use guide**
 		
 ## Trouble Shooting
 
-*Connection problems*: When cloning, pushing or pulling (or others), you might be asked to connect. If you can't access you're either using the wrong account
+**Connection problems**: When cloning, pushing or pulling (or others), you might be asked to connect. If you can't access you're either using the wrong account
 in which case you have to make sure you connect with the account linked to the repo. Otherwise, it most likely means that we made a mistake on our side and forgot
 to give you acces. In this case, contact us (see contact us section)
 
-*Conflicts*: When pushing or pulling, gitBash might warn you or even prevent you from continuing if you don't resolve the conflicts. This can also happen if you didn't pull before 
+**Conflicts**: When pushing or pulling, gitBash might warn you or even prevent you from continuing if you don't resolve the conflicts. This can also happen if you didn't pull before 
 starting to code. Conflicts happen when you have modified the same bit of code as someone else and git can't figure out itself what to keep and what to discard. To solve this, go 
 to the concerned file and look for the `<<<<<<<`, `>>>>>>>>` and the `Head` markers which points to the conflicts. Delete the parts you want to keep and make sure before trying 
 to push again that you don't have any of these markers in your code. **Always push after you solved conflicts**.
@@ -54,6 +54,7 @@ I repeat, **try to get it sorted yourself first**. But also, if you're not sure 
 If you have any problem **you can't solve by yourself** contact one of us either via mail or via slack. The latter is the best and quickest way to get a response. 
 
 > Théo Houle (TL AV Vostok) : theo.houle@epfl.ch 
+
 > Gaston Wolfart (TL AV Vostok) : gaston.wolfart@epfl.ch 
 
 
