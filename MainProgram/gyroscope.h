@@ -1,3 +1,6 @@
+#if !defined(GYROSCOPE_H)
+#define GYROSCOPE_H
+
 /*
 extends sensor
 A class that represents the gyroscope a board the rocket
@@ -22,3 +25,5 @@ private:
     double yRot;
     double zRot;
 };
+
+#endif // GYROSCOPE_H

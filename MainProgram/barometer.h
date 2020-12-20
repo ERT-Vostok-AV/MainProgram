@@ -1,3 +1,6 @@
+#if !defined(BAROMETER_H)
+#define BAROMETER_H
+
 /*
 extends sensor
 A class that represents the barometer aboard the rocket
@@ -20,3 +23,5 @@ private:
 
 
 };
+
+#endif // BAROMETER_H

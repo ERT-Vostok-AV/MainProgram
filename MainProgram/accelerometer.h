@@ -1,3 +1,6 @@
+#if !defined(ACCELEROMETER_H)
+#define ACCELEROMETER_H
+
 /*
 extends sensor
 A class that represents the accelerometer a board the rocket
@@ -22,3 +25,5 @@ private:
     double yAcc;
     double zAcc;
 };
+
+#endif // ACCELEROMETER_H

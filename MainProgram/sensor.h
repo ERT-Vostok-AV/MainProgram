@@ -1,10 +1,10 @@
+#if !defined(SENSOR_H)
+#define SENSOR_H
+
 /*
 An abstract Sensor class
 
-
-
 */
-
 
 class Sensor{
 
@@ -16,3 +16,5 @@ public:
 private:
    int i2cAddress;
 };
+
+#endif // SENSOR_H
