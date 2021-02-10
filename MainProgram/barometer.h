@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #if !defined(BAROMETER_H)
 #define BAROMETER_H
 
@@ -13,13 +12,15 @@ A class that represents the barometer aboard the rocket
 class Barometer : public Sensor {
 
 public:
-    Barometer(int i2cAddress);
+    Barometer();
     virtual void measure() override;
     
-    int getAltitude() const;
+    bool begin();
+    double getStartPressure();
+    unsigned getAltitude() const;
 
 private:
-    double pressure;
+    double pressure, startPressure;
     unsigned altitude; // ranges from 0 to 2048 m  /!\ normalizer /!\ f(x) = o si x<0, 2048 si x > 2048, x si x e[0,2048]
 
 
