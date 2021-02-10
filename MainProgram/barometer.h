@@ -15,7 +15,7 @@ public:
     Barometer(int i2cAddress);
     virtual void measure() override;
     
-    int getAltitude() const;
+    unsigned getAltitude() const;
 
 private:
     double pressure;

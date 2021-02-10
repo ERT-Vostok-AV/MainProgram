@@ -7,7 +7,7 @@ Gyroscope::Gyroscope(int i2cAddress) : Sensor(i2cAddress) {
 
 void Gyroscope::measure() {
     //Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut temperature
+    //et modifie les attributs de rotation
 
     //temp
     xRot = 0;
