@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #if !defined(BAROMETER_H)
 #define BAROMETER_H
 
@@ -25,3 +26,4 @@ private:
 };
 
 #endif // BAROMETER_H
+

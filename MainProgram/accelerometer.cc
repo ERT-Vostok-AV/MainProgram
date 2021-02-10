@@ -1,5 +1,7 @@
 #include "accelerometer.h"
 
+
+
 Accelerometer::Accelerometer(int i2cAddress) : Sensor(i2cAddress) {
     //initialisation calibration ici
     measure();
@@ -7,7 +9,7 @@ Accelerometer::Accelerometer(int i2cAddress) : Sensor(i2cAddress) {
 
 void Accelerometer::measure() {
     //Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut temperature
+    //et modifie les attributs accélération
 
     //temp
     xAcc = 0;

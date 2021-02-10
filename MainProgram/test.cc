@@ -4,6 +4,7 @@
 #include "thermometer.h"
 #include "accelerometer.h"
 #include "gyroscope.h"
+#include "batteryIndicator.h"
 
 #include "sensor.h"
 
