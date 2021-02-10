@@ -16,11 +16,13 @@ int main(int argc, char const *argv[])
     Thermometer thermo(0x456);
     Accelerometer accel(0x345);
     Gyroscope gyro(0x666);
+    BatteryIndicator battery;
 
     cout << "altitude : " << baro.getAltitude() << endl;
     cout << "temperature : " << thermo.getTemperature() << endl;
     cout << "acceleration :" << " x=" << accel.getXAcc() << " y=" << accel.getYAcc() << " z=" << accel.getZAcc() << endl;
     cout << "orientation :" << " Rx=" << gyro.getXRot() << " Ry=" << gyro.getYRot() << " Rz=" << gyro.getZRot() << endl;
+    cout << "battery level :" << battery.getBatteryLevel() << endl;
     
     return 0;
 }
