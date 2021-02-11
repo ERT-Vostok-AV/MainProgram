@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+
 typedef std::vector<double> Data;
 
 class RadioModule {

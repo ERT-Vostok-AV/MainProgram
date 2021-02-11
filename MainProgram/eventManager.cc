@@ -1,5 +1,12 @@
 #include "eventManager.h"
 
+/* Structure de la fifo
+  [[alt1, accX1, accY1, accZ1],
+  [alt2, accX2, accY2, accZ2],
+  [alt3, accX3, accY3, accZ3],
+  ...]
+*/
+
 bool EventManager::isLiftOff(std::queue<std::vector<double>> fifo){
 
 }
