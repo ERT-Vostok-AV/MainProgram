@@ -15,9 +15,11 @@ void Barometer::measure() {
 
 double Barometer::getStartPressure(){
     return 0.0;
+
 }
 
 //accesseur
-unsigned Barometer::getAltitude() const {
+unsigned Barometer::getAltitude() {
+    measure();
     return altitude;
 }
