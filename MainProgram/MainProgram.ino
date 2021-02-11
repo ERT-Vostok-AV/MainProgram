@@ -27,7 +27,6 @@ Buffer buffer;
 std::queue<std::vector<double>> fifo;
 std::vector<double> measures;
 
-
 Barometer baro;
 Thermometer thermo(0x76);
 Gyroscope gyro(0x68);
