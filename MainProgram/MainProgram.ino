@@ -16,10 +16,10 @@ enum States{
 };
 
 enum Event{
-  LiftOff, Apogee, ScndEvent, TouchDown
+  LiftOff, Apogee, RecoveryTrigger, TouchDown
 };
 
-Barometer baro(0x76);
+Barometer baro;
 Thermometer thermo(0x76);
 Gyroscope gyro(0x68);
 Accelerometer accel(0x68);
@@ -29,7 +29,7 @@ States state;
 bool event;
 
 void setup() {
-  
+
 }
 
 void loop() {
