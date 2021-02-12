@@ -1,30 +1,26 @@
 #include "gyroscope.h"
 
-Gyroscope::Gyroscope(int i2cAddress) : Sensor(i2cAddress) {
-    //initialisation calibration ici
-    measure();
-}
+Gyroscope::Gyroscope() : Sensor(0x76) {}
 
 void Gyroscope::measure() {
-    //Récupère les données brutes, les traites si besoin
+    //TODO Récupère les données brutes, les traites si besoin
     //et modifie les attributs de rotation
 
-    //temp
+    //Codez ici
+
+    //(remplacer les 0 par les valeurs calculées)
     xRot = 0;
     yRot = 0;
     zRot = 0;
-    
 }
 
-//Rotesseur
-double Gyroscope::getXRot() const {
-    return xRot;
+bool Gyroscope::begin() {
+    //TODO initialisation et calibration
 }
 
-double Gyroscope::getYRot() const {
-    return yRot;
+//Accesseur
+std::vector<double> Gyroscope::getRot() {
+    measure();
+    return {xRot, yRot, zRot};
 }
 
-double Gyroscope::getZRot() const {
-    return zRot;
-}

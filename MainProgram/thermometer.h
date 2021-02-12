@@ -12,12 +12,15 @@ A class that represents the thermometer aboard the rocket
 class Thermometer : public Sensor {
 
 public:
-    Thermometer(int i2cAddresse);
-    virtual void measure() override;
+    Thermometer();
     
-    int getTemperature() const;
+    bool begin();
+    
+    int getTemperature();
 
 private:
+    virtual void measure() override;
+
     unsigned temperature; //ranges from -64 to 64 °C
 };
 

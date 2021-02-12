@@ -7,19 +7,20 @@ A class that represents the gyroscope a board the rocket
 
 */
 
+#include <vector>
 #include "sensor.h"
 
 class Gyroscope : public Sensor {
 
 public:
-    Gyroscope(int i2cAddress);
-    virtual void measure() override;
+    Gyroscope();
     
-    double getXRot() const;
-    double getYRot() const;
-    double getZRot() const;
+    bool begin();
+    
+    std::vector<double> getRot();
 
 private:
+    virtual void measure() override;
     // 16 bit askip et en [g]
     double xRot;
     double yRot;

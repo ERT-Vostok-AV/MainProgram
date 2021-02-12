@@ -25,12 +25,13 @@ enum States{
 typedef std::vector<std::vector<double>> Buffer;
 Buffer buffer;
 std::queue<std::vector<double>> fifo;
-std::vector<double> measures;
+
+std::vector<double> measures, accCoord, gyroCoord;
 
 Barometer baro;
-Thermometer thermo(0x76);
-Gyroscope gyro(0x68);
-Accelerometer accel(0x68);
+Thermometer thermo;
+Gyroscope gyro;
+Accelerometer accel;
 BatteryIndicator battery;
 EventManager eventManager;
 Storage storage;
@@ -60,6 +61,8 @@ States state;
 int millis(){return 0;} //STUB USELESS PIECE OF SHIT
 void delay(int sex){} //STUB delay
 
+void getMeasures();
+
 void setup() {
   currTime = 0;
   logTime = 0;
@@ -78,12 +81,32 @@ void loop() {
        
        break;
 
-    case Init: 
+    case Init:
+      //pleins de ifs pour le testation
       if (!baro.begin()){
         buzzer.error();
-        // Error starting barometer (may be buzer?) Serial print pour testing
+        // Error starting barometer. Serial print pour testing
       }
-      //TODO Init tous les autres et buzzer
+      if (!thermo.begin()) {
+        buzzer.error();
+        // Error starting thermometer. Serial print pour testing
+      }
+      if (!accel.begin()) {
+        buzzer.error();
+        // Error starting accelerometer. Serial print pour testing
+      }
+      if (!gyro.begin()) {
+        buzzer.error();
+        // Error starting gyroscope. Serial print pour testing
+      }
+      if (!battery.begin()) {
+        buzzer.error();
+        // Error starting battery indicator. Serial print pour testing
+      }
+      if (!radio.begin()) {
+        buzzer.error();
+        // Error starting radio. Serial print pour testing
+      }
 
       // If no errors initializing, change state
 
@@ -97,19 +120,7 @@ void loop() {
       //50Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        double alt = baro.getAltitude();
-        double accelX = accel.getXAcc();
-        double accelY = accel.getYAcc();
-        double accelZ = accel.getZAcc(); 
-
-        measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-                     accelX, accelY, accelZ, gyro.getXRot(), gyro.getYRot(), gyro.getZRot()};
-        buffer.push_back(measures);
-
-        if(fifo.size() >= (radioInterval / measureInterval)){
-          fifo.pop();
-        }
-        fifo.push({alt, accelX, accelY, accelZ});
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -157,18 +168,7 @@ void loop() {
       //100Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        double alt = baro.getAltitude();
-        double accelX = accel.getXAcc();
-        double accelY = accel.getYAcc();
-        double accelZ = accel.getZAcc(); 
-
-        measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-                     accelX, accelY, accelZ, gyro.getXRot(), gyro.getYRot(), gyro.getZRot()};
-        buffer.push_back(measures);
-        if(fifo.size() >= (radioInterval / measureInterval)){
-          fifo.pop();
-        }
-        fifo.push({alt, accelX, accelY, accelZ});
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -212,23 +212,7 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        double alt = baro.getAltitude();
-        double accelX = accel.getXAcc();
-        double accelY = accel.getYAcc();
-        double accelZ = accel.getZAcc(); 
-
-        // Check if we've reached trigger altitude
-        if(eventManager.isReTrigger(alt) && !eventManager.hasTriggered()){
-          eventManager.trigger();
-        }
- 
-        measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-                     accelX, accelY, accelZ, gyro.getXRot(), gyro.getYRot(), gyro.getZRot()};
-        buffer.push_back(measures);
-        if(fifo.size() >= (radioInterval / measureInterval)){
-          fifo.pop();
-        }
-        fifo.push({alt, accelX, accelY, accelZ});
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -274,19 +258,7 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        double alt = baro.getAltitude();
-        double accelX = accel.getXAcc();
-        double accelY = accel.getYAcc();
-        double accelZ = accel.getZAcc(); 
-
-        measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-                     accelX, accelY, accelZ, gyro.getXRot(), gyro.getYRot(), gyro.getZRot()};
-        buffer.push_back(measures);
-
-        if(fifo.size() >= (radioInterval / measureInterval)){
-          fifo.pop();
-        }
-        fifo.push({alt, accelX, accelY, accelZ});
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -327,4 +299,19 @@ void loop() {
       break;
   }
 
+}
+
+void getMeasures() {
+  double alt = baro.getAltitude();
+  std::vector<double> accCoord = accel.getAcc();
+  std::vector<double> gyroCoord = gyro.getRot();
+
+  measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
+              accCoord[0], accCoord[1], accCoord[2], gyroCoord[0], gyroCoord[1], gyroCoord[2]};
+  buffer.push_back(measures);
+
+  if (fifo.size() >= (radioInterval / measureInterval)) {
+    fifo.pop();
+  }
+  fifo.push({alt, accCoord[0], accCoord[1], accCoord[2]});
 }

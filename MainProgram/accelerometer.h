@@ -7,19 +7,20 @@ A class that represents the accelerometer a board the rocket
 
 */
 
+#include <vector>
 #include "sensor.h"
 
 class Accelerometer : public Sensor {
 
 public:
-    Accelerometer(int i2cAddress);
-    virtual void measure() override;
+    Accelerometer();
+
+    bool begin();
     
-    double getXAcc() const;
-    double getYAcc() const;
-    double getZAcc() const;
+    std::vector<double> getAcc();
 
 private:
+    virtual void measure() override;
     // 16 bit askip et en [g]
     double xAcc;
     double yAcc;

@@ -1,18 +1,23 @@
 #include "batteryIndicator.h"
 
-BatteryIndicator::BatteryIndicator() : Sensor(0x000){ //No i2C address for the battery indicator
-    //initialisation calibration ici
-    measure();
-}
+BatteryIndicator::BatteryIndicator() : Sensor(0x00){}
 
 void BatteryIndicator::measure() {
-    //Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut batteryLevel
+    //TODO Récupère les données brutes, les traites si besoin
+    //et modifie l'attribut du niveau de batterie
 
-    batteryLevel = 0; //temp
+    //Codez ici
+
+    //(remplacer les 0 par la valeurs calculée)
+    batteryLevel = 0;
+}
+
+bool BatteryIndicator::begin(){
+    //TODO initialisation et calibration
 }
 
 //accesseur
-unsigned BatteryIndicator::getBatteryLevel() const {
+unsigned BatteryIndicator::getBatteryLevel() {
+    measure();
     return batteryLevel;
 }

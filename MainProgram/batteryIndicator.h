@@ -13,10 +13,13 @@ class BatteryIndicator : public Sensor {
 public:
     BatteryIndicator();
 
-    virtual void measure() override;
-    unsigned getBatteryLevel() const;
+    bool begin();
+
+    unsigned getBatteryLevel();
 
 private:
+    virtual void measure() override;
+
     unsigned batteryLevel; // ranges from 0 to 100 %
 };
 

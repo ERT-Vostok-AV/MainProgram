@@ -9,6 +9,8 @@ typedef std::vector<double> Data;
 class RadioModule {
 
 public:
+    bool begin();
+
     bool pack(const Data& data);
     bool send();
     bool packSend(const Data& data);

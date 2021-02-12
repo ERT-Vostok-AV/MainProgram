@@ -1,20 +1,24 @@
 #include "thermometer.h"
 
-Thermometer::Thermometer(int i2cAddress) : Sensor(i2cAddress) {
-    //initialisation calibration ici
-    measure();
-}
+Thermometer::Thermometer() : Sensor(0x68) {}
 
 
 void Thermometer::measure() {
-    //Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut temperature
+    //TODO Récupère les données brutes, les traites si besoin
+    //et modifie l'attribut de la température
 
-    temperature = 0; //temp
+    //Codez ici
+
+    //(remplacer le 0 par la valeur calculée)
+    temperature = 0;
 }
 
+bool Thermometer::begin() {
+    //TODO initialisation et calibration
+}
 
 //accesseur
-int Thermometer::getTemperature() const {
+int Thermometer::getTemperature() {
+    measure();
     return temperature;
 }

@@ -2,31 +2,26 @@
 
 
 
-Accelerometer::Accelerometer(int i2cAddress) : Sensor(i2cAddress) {
-    //initialisation calibration ici
-    measure();
-}
+Accelerometer::Accelerometer() : Sensor(0x68) {}
 
 void Accelerometer::measure() {
-    //Récupère les données brutes, les traites si besoin
-    //et modifie les attributs accélération
+    //TODO Récupère les données brutes, les traites si besoin
+    //et modifie les attributs de accéleration
 
-    //temp
+    //Codez ici
+
+    //(remplacer les 0 par les valeurs calculées)
     xAcc = 0;
     yAcc = 0;
     zAcc = 0;
-    
+}
+
+bool Accelerometer::begin() {
+    //TODO initialisation et calibration
 }
 
 //accesseur
-double Accelerometer::getXAcc() const {
-    return xAcc;
-}
-
-double Accelerometer::getYAcc() const {
-    return yAcc;
-}
-
-double Accelerometer::getZAcc() const {
-    return zAcc;
+std::vector<double> Accelerometer::getAcc() {
+    measure();
+    return {xAcc, yAcc, zAcc};
 }
