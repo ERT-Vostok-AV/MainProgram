@@ -4,15 +4,16 @@
 #include <queue>
 #include <vector>
 
+typedef std::vector<double> Data;
+
 class EventManager {
 
-public: 
-
-
+public:
     EventManager();
-    bool isLiftOff(std::queue<std::vector<double>> fifo);
-    bool isTouchDown(std::queue<std::vector<double>> fifo);
-    bool isApogee(std::queue<std::vector<double>> fifo);
+
+    bool isLiftOff(std::queue<Data> fifo);
+    bool isTouchDown(std::queue<Data> fifo);
+    bool isApogee(std::queue<Data> fifo);
     bool isReTrigger(double alt);
     bool trigger();
     bool hasTriggered();

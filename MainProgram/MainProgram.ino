@@ -22,11 +22,13 @@ enum States{
 };
 
 // Buffer for saving data to be logged
-typedef std::vector<std::vector<double>> Buffer;
+typedef std::vector<double> Data;
+typedef std::vector<Data> Buffer;
 Buffer buffer;
-std::queue<std::vector<double>> fifo;
+std::queue<Data> fifo;
 
-std::vector<double> measures, accCoord, gyroCoord;
+Data measures, accCoord, gyroCoord;
+double alt;
 
 Barometer baro;
 Thermometer thermo;
@@ -62,6 +64,8 @@ int millis(){return 0;} //STUB USELESS PIECE OF SHIT
 void delay(int sex){} //STUB delay
 
 void getMeasures();
+void logBuffer();
+void radioTranssmission();
 
 void setup() {
   currTime = 0;
@@ -77,8 +81,7 @@ void loop() {
        if(currTime > idleTimeout){
          state = Init;
          buzzer.initStart();
-       } 
-       
+       }
        break;
 
     case Init:
@@ -126,34 +129,21 @@ void loop() {
       // 1Hz Data logging
       if(currTime >= logTime + logInterval){
         logTime += logInterval;
-
-        // If we use memory
-        if(!storage.saveDataMemory(buffer)){
-          buzzer.error(); // Really ?
-          // Error while saving in memory
-        }
-        // If we don't use memory (uncomment)
-        //storage.savaDataSD(buffer);
-
-        buffer.clear();
+        logBuffer();
       }
 
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        if (!radio.packSend(buffer.back())){ // Send most recent data sample
-          buzzer.error();
-          // Error sending or packing shit
-        }
+        radioTransmission();
 
         if(eventManager.isLiftOff(fifo)){
-          fifo = std::queue<std::vector<double>>(); //empties the queue ,_,
+          fifo = std::queue<Data>(); //empties the queue ,_,
           liftOffTime = currTime;
           state = Ascending;
           break;
         }
       }
-
 
       /* Timeout Check  /!\ ONLY IF WE USE MEMORY BEFORE STORING IN THE SD CARD /!\ */
       if(currTime >= flightTimeout){
@@ -174,26 +164,16 @@ void loop() {
       // 1Hz Data logging
       if(currTime >= logTime + logInterval){
         logTime += logInterval;
-
-        // If we use memory
-        if(!storage.saveDataMemory(buffer)){
-          // Error while saving in memory
-        }
-        // If we don't use memory (uncomment)
-        //storage.savaDataSD(buffer);
-        buffer.clear();
+        logBuffer();
       }
       
       // 2Hz GS communication
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-
-        if (!radio.packSend(buffer.back())){
-          // Error sending or packing shit
-        }
+        radioTransmission();
     
         if(eventManager.isApogee(fifo)){
-          fifo = std::queue<std::vector<double>>(); //empties the queue ,_,
+          fifo = std::queue<Data>(); //empties the queue ,_,
           state = Descending;
           break;
         }
@@ -213,31 +193,25 @@ void loop() {
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
         getMeasures();
+
+        if(eventManager.isReTrigger(alt) && !eventManager.hasTriggered()){
+          eventManager.trigger();
+        }
       }
 
       // 1Hz Data logging
       if(currTime >= logTime + logInterval){
         logTime += logInterval;
-
-        // If we use memory
-        if(!storage.saveDataMemory(buffer)){
-          // Error while saving in memory
-        }
-        // If we don't use memory (uncomment)
-        //storage.savaDataSD(buffer);
-        buffer.clear();
+        logBuffer();
       }
       
       // 2Hz GS communication
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-
-        if (!radio.packSend(buffer.back())){
-          // Error sending or packing shit
-        }
+        radioTransmission();
     
         if(eventManager.isTouchDown(fifo)){
-          fifo = std::queue<std::vector<double>>(); //empties the queue ,_,
+          fifo = std::queue<Data>(); //empties the queue ,_,
           touchdownTime = currTime;
           state = PostFTrans;
           break;
@@ -264,25 +238,13 @@ void loop() {
       // 1Hz Data logging
       if(currTime >= logTime + logInterval){
         logTime += logInterval;
-
-        // If we use memory
-        if(!storage.saveDataMemory(buffer)){
-          buzzer.error(); // Really ?
-          // Error while saving in memory
-        }
-        // If we don't use memory (uncomment)
-        //storage.savaDataSD(buffer);
-
-        buffer.clear();
+        logBuffer();
       }
 
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        if (!radio.packSend(buffer.back())){ // Send most recent data sample
-          buzzer.error();
-          // Error sending or packing shit
-        }
+        radioTransmission();
       }
 
       // Timeout if touchdown was missed
@@ -298,13 +260,12 @@ void loop() {
       // C LA MERD
       break;
   }
-
 }
 
 void getMeasures() {
-  double alt = baro.getAltitude();
-  std::vector<double> accCoord = accel.getAcc();
-  std::vector<double> gyroCoord = gyro.getRot();
+  alt = baro.getAltitude();
+  accCoord = accel.getAcc();
+  gyroCoord = gyro.getRot();
 
   measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
               accCoord[0], accCoord[1], accCoord[2], gyroCoord[0], gyroCoord[1], gyroCoord[2]};
@@ -314,4 +275,23 @@ void getMeasures() {
     fifo.pop();
   }
   fifo.push({alt, accCoord[0], accCoord[1], accCoord[2]});
+}
+
+void logBuffer() {
+  // If we use memory
+  if(!storage.saveMemory(buffer)){
+    buzzer.error(); // Really ?
+    // Error while saving in memory
+  }
+  // If we don't use memory (uncomment)
+  //storage.savaDataSD(buffer);
+
+  buffer.clear();
+}
+
+void radioTransmission(){
+  if (!radio.packSend(buffer.back())){ // Send most recent data sample
+    buzzer.error();
+    // Error sending or packing shit
+  }
 }

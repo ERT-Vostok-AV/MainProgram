@@ -7,6 +7,8 @@
   ...]
 */
 
+EventManager::EventManager() : triggered(false) {}
+
 bool EventManager::isLiftOff(std::queue<std::vector<double>> fifo){
 
 }
