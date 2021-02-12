@@ -7,11 +7,11 @@
   ...]
 */
 
-bool Storage::savaDataSD(const Buffer& buffer){
+bool Storage::saveSD(const Buffer& buffer){
     
 }
 
-bool Storage::saveDataMemory(const Buffer& buffer){
+bool Storage::saveMemory(const Buffer& buffer){
 
 }
 

@@ -10,8 +10,8 @@ class Storage {
 public: 
     Storage();
 
-    bool saveDataMemory(const Buffer& buffer);
-    bool savaDataSD(const Buffer& buffer);
+    bool saveMemory(const Buffer& buffer);
+    bool saveSD(const Buffer& buffer);
     bool sdTransfer();
 private: 
 };
