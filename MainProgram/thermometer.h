@@ -21,7 +21,7 @@ public:
 private:
     virtual void measure() override;
 
-    unsigned temperature; //ranges from -64 to 64 °C
+    int temperature; //ranges from -64 to 64 °C
 };
 
 #endif // THERMOMETER_H
