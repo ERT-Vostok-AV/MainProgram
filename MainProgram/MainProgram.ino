@@ -21,6 +21,9 @@ enum States{
   Idle, Init, PrefTrans, Ascending, Descending, PostFTrans, Beacon
 };
 
+// Holds the current state
+States state;
+
 // Buffer for saving data to be logged
 typedef std::vector<double> Data;
 typedef std::vector<Data> Buffer;
@@ -56,8 +59,7 @@ constexpr int apogeeTimeout = 20000; // 20 seconds
 
 
 
-// Holds the current state
-States state;
+
 
 
 int millis(){return 0;} //STUB USELESS PIECE OF SHIT
@@ -249,6 +251,7 @@ void loop() {
 
       // Timeout if touchdown was missed
       if(currTime >= (touchdownTime + transferTimeout)){
+        storage.sdTransfer();
         state = Beacon;
       }
       break;
