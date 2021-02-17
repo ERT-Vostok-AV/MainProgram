@@ -13,8 +13,9 @@ void Buzzer::initSuccess(){
     // bip bip
 }
 
-void Buzzer::startInit(){
+void Buzzer::initStart(){
     // bip (boring)
+    // Iìci un bout de code
 }
 
 void 
