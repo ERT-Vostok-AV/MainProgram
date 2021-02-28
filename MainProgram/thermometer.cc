@@ -1,23 +1,23 @@
 #include "thermometer.h"
+#include <Adafruit_BMP280.h>
+
 
 Thermometer::Thermometer() : Sensor(0x68) {}
 
+Adafruit_BMP280 bmpThermo;
 
 void Thermometer::measure() {
-    //TODO Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut de la température
-
-    //Codez ici
-
-    //(remplacer le 0 par la valeur calculée)
-    temperature = 0;
+    
+    temperature =  bmpThermo.readTemperature();// en °C
 }
 
 bool Thermometer::begin() {
-    //TODO initialisation et calibration
+	
+	return bmpThermo.begin(i2cAddress);
 }
 
-//accesseur
+// dans librairie adresse par défault est 0x77 et Chip ID est 0x58
+
 int Thermometer::getTemperature() {
     measure();
     return temperature;
