@@ -14,13 +14,13 @@ public:
     BatteryIndicator();
 
     bool begin();
+
+    virtual void measure() override;
     
-    unsigned getBatteryLevel();
+    double getBatteryLevel();
 
 private:
-    virtual void measure() override;
-
-    unsigned batteryLevel; // ranges from 0 to 100 %
+    double batteryLevel; // ranges from 0 to 100 %
 };
 
 

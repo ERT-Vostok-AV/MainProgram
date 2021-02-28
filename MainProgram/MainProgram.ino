@@ -31,9 +31,7 @@ Buffer buffer;
 // FIFO list for event detection
 QueueList<double*> fifo;
 
-double measuresArray[9], rotAndVelCoord[6];
-
-double alt;
+double measures[9];
 
 Bmp280 bmp;
 Mpu6050 mpu;
@@ -266,19 +264,19 @@ void loop() {
 
 void getMeasures() {
   bmp.measure();
-  alt = bmp.getAlt();
-  rotAndVelCoord = mpu.getRotAndVel(); // xRot yRot zRot xVel yVel zVel
+  mpu.measure();
+  battery.measure();
 
-  measures = {(double)battery.getBatteryLevel(), bmp.getAlt(), bmp.getTemp(),
-              rotAndVelCoord[0], rotAndVelCoord[1], rotAndVelCoord[2],
-              rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]};
+  measures = {battery.getBatteryLevel(), bmp.getAlt(), bmp.getTemp(),
+              mpu.getVelX(), mpu.getVelY(), mpu.getVelZ(),
+              mpu.getRotX(), mpu.getRotX(), mpu.getRotX()};
 
   buffer.push_back(measures);
 
   if (fifo.count() > radioInterval / measureInterval) {
     fifo.pop();
   }
-  fifo.push({alt, rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]});
+  fifo.push({bmp.getAlt(), mpu.getVelX(), mpu.getVelY(), mpu.getVelZ()});
 }
 
 void logBuffer() {
