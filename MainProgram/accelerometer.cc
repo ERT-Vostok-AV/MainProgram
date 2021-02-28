@@ -15,19 +15,19 @@ bool Accelerometer::begin() {
 }
 
 void Accelerometer::measure() {
-   
+
 
   accelX = Wire.read()<<8|Wire.read();//Store first data
   accelY = Wire.read()<<8|Wire.read();//Store middle data
   accelZ = Wire.read()<<8|Wire.read();//Store last data
 
-  gForceX = accelX / 16384.0;//Divide by 16384.0 to know the force in Gs
+  gForceX = accelX / 16384.0;//Divide by 16384.0 to know the force in Gs Hey !
   gForceY = accelY / 16384.0;
   gForceZ = accelZ / 16384.0;
 
   inter = Timer - millis();
   Timer = millis();
-    
+
   xVel = (gForceX * inter)/1000;
   yVel = (gForceY * inter)/1000;
   zVel = (gForceZ * inter)/1000;
