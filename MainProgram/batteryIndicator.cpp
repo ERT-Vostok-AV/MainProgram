@@ -16,7 +16,6 @@ bool BatteryIndicator::begin(){
 }
 
 //accesseur
-unsigned BatteryIndicator::getBatteryLevel() {
-    measure();
+double BatteryIndicator::getBatteryLevel() {
     return batteryLevel;
 }
