@@ -22,9 +22,7 @@ public:
 private:
     virtual void measure() override;
     // 16 bit askip et en [g]
-    double xAcc;
-    double yAcc;
-    double zAcc;
+    double xVel, yVel, zVel; //velocity
 };
 
 #endif // ACCELEROMETER_H
