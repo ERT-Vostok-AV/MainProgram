@@ -1,19 +1,20 @@
+
 #if !defined(EVENT_MANAGER_H)
 #define EVENT_MANAGER_H
 
-#include <queue>
-#include <vector>
+#include <cppQueue.h>
+#include <Vector.h>
 
-typedef std::vector<double> Data;
+typedef Vector<double> Data;
 
 class EventManager {
 
 public:
     EventManager();
 
-    bool isLiftOff(std::queue<Data> fifo);
-    bool isTouchDown(std::queue<Data> fifo);
-    bool isApogee(std::queue<Data> fifo);
+    bool isLiftOff(cppQueue fifo);
+    bool isTouchDown(cppQueue fifo);
+    bool isApogee(cppQueue fifo);
     bool isReTrigger(double alt);
     bool trigger();
     bool hasTriggered();

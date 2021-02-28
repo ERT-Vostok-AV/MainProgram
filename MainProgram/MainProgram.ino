@@ -1,3 +1,5 @@
+#include <QueueList.h>
+
 /*
 This is the main program that controls the avionics on board of the Vostok rocket
 
@@ -5,8 +7,8 @@ Tasks :
  - Telemetry
  - Second recovery event redundancy
 */
-#include <queue>
-#include <vector>
+#include <cppQueue.h>
+#include <Vector.h>
 #include "barometer.h"
 #include "thermometer.h"
 #include "accelerometer.h"
@@ -25,12 +27,13 @@ enum States{
 States state;
 
 // Buffer for saving data to be logged
-typedef std::vector<double> Data;
-typedef std::vector<Data> Buffer;
+typedef Vector<Data> Buffer;
 Buffer buffer;
-std::queue<Data> fifo;
+cppQueue fifo25Rec(sizeof(Vector), 25, FIFO, false); //25 records
+cppQueue fifo50Rec(sizeof(Vector), 50, FIFO, false); //50 records
+cppQueue fifo5Rec(sizeof(Vector), 5, FIFO, false); //5 records
 
-Data measures, accCoord, gyroCoord;
+double measures[9], accCoord[3], gyroCoord[3];
 double alt;
 
 Barometer baro;
@@ -65,11 +68,14 @@ constexpr int apogeeTimeout = 20000; // 20 seconds
 int millis(){return 0;} //STUB USELESS PIECE OF SHIT
 void delay(int sex){} //STUB delay
 
-void getMeasures();
+void getMeasures(cppQueue fifo);
 void logBuffer();
 void radioTranssmission();
 
 void setup() {
+  Serial.begin(9600);
+  while(!Serial)
+  Serial.println("REady to rock");
   currTime = 0;
   logTime = 0;
   radioTime = 0;
@@ -82,6 +88,7 @@ void loop() {
     case Idle:
        if(currTime > idleTimeout){
          state = Init;
+         Serial.println("New state: "); Serial.println(state);
          buzzer.initStart();
        }
        break;
@@ -125,7 +132,7 @@ void loop() {
       //50Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures();
+        getMeasures(fifo25Rec);
       }
 
       // 1Hz Data logging
@@ -140,7 +147,7 @@ void loop() {
         radioTransmission();
 
         if(eventManager.isLiftOff(fifo)){
-          fifo = std::queue<Data>(); //empties the queue ,_,
+          fifo25Rec.flush(); //empties the queue ,_,
           liftOffTime = currTime;
           state = Ascending;
           break;
@@ -160,7 +167,7 @@ void loop() {
       //100Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures();
+        getMeasures(fifo50Rec);
       }
 
       // 1Hz Data logging
@@ -175,7 +182,7 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isApogee(fifo)){
-          fifo = std::queue<Data>(); //empties the queue ,_,
+          fifo50Rec.flush(); //empties the queue ,_,
           state = Descending;
           break;
         }
@@ -194,7 +201,7 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures();
+        getMeasures(fifo5Rec);
 
         if(eventManager.isReTrigger(alt) && !eventManager.hasTriggered()){
           eventManager.trigger();
@@ -213,7 +220,7 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isTouchDown(fifo)){
-          fifo = std::queue<Data>(); //empties the queue ,_,
+          fifo5Rec.flush(); //empties the queue ,_,
           touchdownTime = currTime;
           state = PostFTrans;
           break;
@@ -234,7 +241,7 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures();
+        getMeasures(fifo5Rec);
       }
 
       // 1Hz Data logging
@@ -265,7 +272,7 @@ void loop() {
   }
 }
 
-void getMeasures() {
+void getMeasures(cppQueue fifo) {
   alt = baro.getAltitude();
   accCoord = accel.getAcc();
   gyroCoord = gyro.getRot();
@@ -274,7 +281,7 @@ void getMeasures() {
               accCoord[0], accCoord[1], accCoord[2], gyroCoord[0], gyroCoord[1], gyroCoord[2]};
   buffer.push_back(measures);
 
-  if (fifo.size() >= (radioInterval / measureInterval)) {
+  if (fifo.isFull()) {
     fifo.pop();
   }
   fifo.push({alt, accCoord[0], accCoord[1], accCoord[2]});

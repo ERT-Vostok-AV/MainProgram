@@ -21,7 +21,7 @@ bool Accelerometer::begin() {
 }
 
 //accesseur
-std::vector<double> Accelerometer::getAcc() {
+Vector<double> Accelerometer::getAcc() {
     measure();
     return {xAcc, yAcc, zAcc};
 }

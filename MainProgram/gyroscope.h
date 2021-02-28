@@ -7,7 +7,7 @@ A class that represents the gyroscope a board the rocket
 
 */
 
-#include <vector>
+#include <Vector.h>
 #include "sensor.h"
 
 class Gyroscope : public Sensor {
@@ -17,7 +17,7 @@ public:
     
     bool begin();
     
-    std::vector<double> getRot();
+    Vector<double> getRot();
 
 private:
     virtual void measure() override;

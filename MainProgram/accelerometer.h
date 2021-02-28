@@ -7,7 +7,7 @@ A class that represents the accelerometer a board the rocket
 
 */
 
-#include <vector>
+#include <Vector.h>
 #include "sensor.h"
 
 class Accelerometer : public Sensor {
@@ -17,7 +17,7 @@ public:
 
     bool begin();
     
-    std::vector<double> getAcc();
+    Vector<double> getAcc();
 
 private:
     virtual void measure() override;

@@ -1,9 +1,8 @@
 #if !defined(STORAGE_H)
 #define STORAGE_H
+#include <Vector.h>
 
-#include <vector>
-
-typedef std::vector<std::vector<double>> Buffer;
+typedef Vector<Vector<double>> Buffer;
 
 class Storage {
 

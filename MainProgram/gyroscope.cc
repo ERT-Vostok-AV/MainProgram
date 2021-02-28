@@ -19,7 +19,7 @@ bool Gyroscope::begin() {
 }
 
 //Accesseur
-std::vector<double> Gyroscope::getRot() {
+Vector<double> Gyroscope::getRot() {
     measure();
     return {xRot, yRot, zRot};
 }

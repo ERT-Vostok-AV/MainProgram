@@ -9,11 +9,11 @@
 
 EventManager::EventManager() : triggered(false) {}
 
-bool EventManager::isLiftOff(std::queue<std::vector<double>> fifo){
+bool EventManager::isLiftOff(cppQueue fifo){
 
 }
 
-bool EventManager::isApogee(std::queue<std::vector<double>> fifo){
+bool EventManager::isApogee(cppQueue fifo){
 
 }
 
@@ -21,7 +21,7 @@ bool EventManager::isReTrigger(double alt){
 
 }
 
-bool EventManager::isTouchDown(std::queue<std::vector<double>> fifo){
+bool EventManager::isTouchDown(cppQueue fifo){
 
 }
 

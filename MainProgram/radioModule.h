@@ -1,10 +1,9 @@
 #if !defined(RADIO_MODULE_H)
 #define RADIO_MODULE_H
 
-#include <vector>
-#include <string>
+#include <Vector.h>
 
-typedef std::vector<double> Data;
+typedef Vector<double> Data;
 
 class RadioModule {
 
@@ -15,7 +14,7 @@ public:
     bool send();
     bool packSend(const Data& data);
 private:
-    std::string packedData;
+    String packedData;
 };
 
 #endif // RADIO_MODULE_H
