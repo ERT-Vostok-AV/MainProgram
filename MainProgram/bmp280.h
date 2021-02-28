@@ -16,15 +16,17 @@ public:
     
     bool begin();
 
-    int* getAltAndTemp();
+    virtual void measure() override;
+
+    double getAlt();
+    double getTemp();
 
 private:
-    virtual void measure() override;
     double getStartPressure();
     double startPressure;
 
-    int altitude; // ranges from 0 to 2048 m
-    int temperature; //ranges from -64 to 64 °C
+    double altitude; // ranges from 0 to 2048 m
+    double temperature; //ranges from -64 to 64 °C
 };
 
 #endif // BMP280_H

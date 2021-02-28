@@ -1,6 +1,6 @@
 #include "eventManager.h"
 
-/* Structure de la fifo
+/* Structure de la fifo //outdated
   [[alt1, accX1, accY1, accZ1],
   [alt2, accX2, accY2, accZ2],
   [alt3, accX3, accY3, accZ3],
@@ -9,11 +9,11 @@
 
 EventManager::EventManager() : triggered(false) {}
 
-bool EventManager::isLiftOff(cppQueue fifo){
+bool EventManager::isLiftOff(QueueList<double*> fifo){
 
 }
 
-bool EventManager::isApogee(cppQueue fifo){
+bool EventManager::isApogee(QueueList<double*> fifo){
 
 }
 
@@ -21,7 +21,7 @@ bool EventManager::isReTrigger(double alt){
 
 }
 
-bool EventManager::isTouchDown(cppQueue fifo){
+bool EventManager::isTouchDown(QueueList<double*> fifo){
 
 }
 
