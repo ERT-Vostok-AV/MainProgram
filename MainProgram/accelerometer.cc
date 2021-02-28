@@ -1,12 +1,12 @@
 #include "accelerometer.h"
 
-long gForceX, gForceY, gForceZ, Timerone, Timertwo, inter;
+long gForceX, gForceY, gForceZ, Timer, inter;
 
 Accelerometer::Accelerometer() : Sensor(0x68) {}
 
 void Accelerometer::measure() {
    
-    Timertwo = millis();
+    Timer = millis();
     Wire.beginTransmission(0b1101000);//I2C adress of MPU
   Wire.write(0x3B); //Starting register for Accel data
   Wire.endTransmission();
@@ -18,8 +18,7 @@ void Accelerometer::measure() {
     gForceX = accelX / 16384.0;//Divide by 16384.0 to know the force in Gs
 gForceY = accelY / 16384.0;
 gForceZ = accelZ / 16384.0;
-    Timerone = millis();
-    inter = Timertwo - Timerone;
+    inter = Timer - millis();
     
     xAcc = (gForceX * inter)/1000;
     yAcc = (gForceY * inter)/1000;
