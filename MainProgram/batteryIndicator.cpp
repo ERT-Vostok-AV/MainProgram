@@ -1,7 +1,5 @@
 #include "batteryIndicator.h"
 
-BatteryIndicator battery;
-
 BatteryIndicator::BatteryIndicator() : Sensor(0x00){}
 
 

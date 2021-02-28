@@ -3,7 +3,7 @@
 
 /*
 extends sensor
-A class that represents the accelerometer a board the rocket
+A class that represents the mpu6050 aboard the rocket
 
 */
 
@@ -16,13 +16,20 @@ public:
 
     bool begin();
     
-    double* getRotAndVel();
-
-private:
+    double getRotX();
+    double getRotY();
+    double getRotZ();
+    double getVelX();
+    double getVelY();
+    double getVelZ();
+    
     virtual void measure() override;
+    
+private:
+    void getOffsets();
     // 16 bit askip et en [m/s]
-    double xVel, yVel, zVel; //velocity
-    double xRot, yRot, zRot; //rotation
+    double velX, velY, velZ; //velocity
+    double degX, degY, degZ; //rotation
 };
 
 #endif // MPU6050_H
