@@ -1,5 +1,3 @@
-#include <QueueList.h>
-
 /*
 This is the main program that controls the avionics on board of the Vostok rocket
 
@@ -7,12 +5,13 @@ Tasks :
  - Telemetry
  - Second recovery event redundancy
 */
-#include <cppQueue.h>
+
 #include <Vector.h>
+#include <QueueList.h>
+
 #include "barometer.h"
 #include "thermometer.h"
-#include "accelerometer.h"
-#include "gyroscope.h"
+#include "mpu6050.h"
 #include "batteryIndicator.h"
 #include "eventManager.h"
 #include "storage.h"
@@ -33,13 +32,12 @@ cppQueue fifo25Rec(sizeof(Vector), 25, FIFO, false); //25 records
 cppQueue fifo50Rec(sizeof(Vector), 50, FIFO, false); //50 records
 cppQueue fifo5Rec(sizeof(Vector), 5, FIFO, false); //5 records
 
-double measures[9], accCoord[3], gyroCoord[3];
+double measures[9], rotAndVelCoord[6];
 double alt;
 
 Barometer baro;
 Thermometer thermo;
-Gyroscope gyro;
-Accelerometer accel;
+Mpu6050 mpu;
 BatteryIndicator battery;
 EventManager eventManager;
 Storage storage;
@@ -75,7 +73,8 @@ void radioTranssmission();
 void setup() {
   Serial.begin(9600);
   while(!Serial)
-  Serial.println("REady to rock");
+  Serial.println("Ready to rock");
+
   currTime = 0;
   logTime = 0;
   radioTime = 0;
@@ -103,13 +102,9 @@ void loop() {
         buzzer.error();
         // Error starting thermometer. Serial print pour testing
       }
-      if (!accel.begin()) {
+      if (!mpu.begin()) {
         buzzer.error();
-        // Error starting accelerometer. Serial print pour testing
-      }
-      if (!gyro.begin()) {
-        buzzer.error();
-        // Error starting gyroscope. Serial print pour testing
+        // Error starting mpu6050. Serial print pour testing
       }
       if (!battery.begin()) {
         buzzer.error();
@@ -274,17 +269,16 @@ void loop() {
 
 void getMeasures(cppQueue fifo) {
   alt = baro.getAltitude();
-  accCoord = accel.getAcc();
-  gyroCoord = gyro.getRot();
+  rotAndVelCoord = mpu.getRotAndVel(); // xRot yRot zRot xVel yVel zVel
 
   measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-              accCoord[0], accCoord[1], accCoord[2], gyroCoord[0], gyroCoord[1], gyroCoord[2]};
+              rotAndVelCoord[0], rotAndVelCoord[1], rotAndVelCoord[2], rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]};
   buffer.push_back(measures);
 
   if (fifo.isFull()) {
     fifo.pop();
   }
-  fifo.push({alt, accCoord[0], accCoord[1], accCoord[2]});
+  fifo.push({alt, rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]});
 }
 
 void logBuffer() {
