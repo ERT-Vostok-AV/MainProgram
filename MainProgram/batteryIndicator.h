@@ -13,10 +13,6 @@ class BatteryIndicator : public Sensor {
 public:
     BatteryIndicator();
 
-    bool begin();
-
-    unsigned getBatteryLevel();
-
 private:
     virtual void measure() override;
 
