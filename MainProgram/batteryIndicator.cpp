@@ -9,7 +9,6 @@ void BatteryIndicator::measure() {
 
 
     //(remplacer les 0 par la valeurs calculée)
-    batteryLevel = battery.getBatteryLevel();
 }
 
 bool BatteryIndicator::begin(){

@@ -2,7 +2,7 @@
 #define STORAGE_H
 #include <Vector.h>
 
-typedef Vector<Vector<double>> Buffer;
+typedef Vector<double*> Buffer;
 
 class Storage {
 

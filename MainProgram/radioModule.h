@@ -3,16 +3,15 @@
 
 #include <Vector.h>
 
-typedef Vector<double> Data;
 
 class RadioModule {
 
 public:
     bool begin();
 
-    bool pack(const Data& data);
+    bool pack(double* data);
     bool send();
-    bool packSend(const Data& data);
+    bool packSend(double* data);
 private:
     String packedData;
 };

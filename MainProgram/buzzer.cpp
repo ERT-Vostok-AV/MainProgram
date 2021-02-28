@@ -18,5 +18,3 @@ void Buzzer::initStart(){
     // bip (boring)
     // Iìci un bout de code
 }
-
-void 

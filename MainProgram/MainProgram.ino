@@ -9,8 +9,7 @@ Tasks :
 #include <Vector.h>
 #include <QueueList.h>
 
-#include "barometer.h"
-#include "thermometer.h"
+#include "bmp280.h"
 #include "mpu6050.h"
 #include "batteryIndicator.h"
 #include "eventManager.h"
@@ -26,17 +25,17 @@ enum States{
 States state;
 
 // Buffer for saving data to be logged
-typedef Vector<Data> Buffer;
+typedef Vector<double*> Buffer;
 Buffer buffer;
-cppQueue fifo25Rec(sizeof(Vector), 25, FIFO, false); //25 records
-cppQueue fifo50Rec(sizeof(Vector), 50, FIFO, false); //50 records
-cppQueue fifo5Rec(sizeof(Vector), 5, FIFO, false); //5 records
 
-double measures[9], rotAndVelCoord[6];
+// FIFO list for event detection
+QueueList<double*> fifo;
+
+double measuresArray[9], rotAndVelCoord[6];
+
 double alt;
 
-Barometer baro;
-Thermometer thermo;
+Bmp280 bmp;
 Mpu6050 mpu;
 BatteryIndicator battery;
 EventManager eventManager;
@@ -63,12 +62,14 @@ constexpr int apogeeTimeout = 20000; // 20 seconds
 
 
 
-int millis(){return 0;} //STUB USELESS PIECE OF SHIT
-void delay(int sex){} //STUB delay
+//int millis(){return 0;} //STUB USELESS PIECE OF SHIT
+//void delay(int time){} //STUB delay
 
-void getMeasures(cppQueue fifo);
+void getMeasures();
 void logBuffer();
 void radioTranssmission();
+
+void clearFifo(QueueList<double*>& fifo);
 
 void setup() {
   Serial.begin(9600);
@@ -94,13 +95,9 @@ void loop() {
 
     case Init:
       //pleins de ifs pour le testation
-      if (!baro.begin()){
+      if (!bmp.begin()) {
         buzzer.error();
-        // Error starting barometer. Serial print pour testing
-      }
-      if (!thermo.begin()) {
-        buzzer.error();
-        // Error starting thermometer. Serial print pour testing
+        // Error starting bmp280. Serial print pour testing
       }
       if (!mpu.begin()) {
         buzzer.error();
@@ -115,7 +112,7 @@ void loop() {
         // Error starting radio. Serial print pour testing
       }
 
-      // If no errors initializing, change state
+      // If no initilisation errors, change state
 
       state = PrefTrans;
       buzzer.initSuccess();
@@ -127,7 +124,7 @@ void loop() {
       //50Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures(fifo25Rec);
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -142,7 +139,7 @@ void loop() {
         radioTransmission();
 
         if(eventManager.isLiftOff(fifo)){
-          fifo25Rec.flush(); //empties the queue ,_,
+          clearFifo(fifo);
           liftOffTime = currTime;
           state = Ascending;
           break;
@@ -162,7 +159,7 @@ void loop() {
       //100Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures(fifo50Rec);
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -177,7 +174,7 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isApogee(fifo)){
-          fifo50Rec.flush(); //empties the queue ,_,
+          clearFifo(fifo);
           state = Descending;
           break;
         }
@@ -196,9 +193,9 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures(fifo5Rec);
+        getMeasures();
 
-        if(eventManager.isReTrigger(alt) && !eventManager.hasTriggered()){
+        if(eventManager.isReTrigger((int) altAndTemp[0]) && !eventManager.hasTriggered()){
           eventManager.trigger();
         }
       }
@@ -215,7 +212,7 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isTouchDown(fifo)){
-          fifo5Rec.flush(); //empties the queue ,_,
+          clearFifo(fifo);
           touchdownTime = currTime;
           state = PostFTrans;
           break;
@@ -236,7 +233,7 @@ void loop() {
       //10Hz data measuring
       if(currTime >= measureTime + measureInterval){
         measureTime += measureInterval;
-        getMeasures(fifo5Rec);
+        getMeasures();
       }
 
       // 1Hz Data logging
@@ -267,15 +264,18 @@ void loop() {
   }
 }
 
-void getMeasures(cppQueue fifo) {
-  alt = baro.getAltitude();
+void getMeasures() {
+  bmp.measure();
+  alt = bmp.getAlt();
   rotAndVelCoord = mpu.getRotAndVel(); // xRot yRot zRot xVel yVel zVel
 
-  measures = {(double)battery.getBatteryLevel(), (double)alt, (double)thermo.getTemperature(),
-              rotAndVelCoord[0], rotAndVelCoord[1], rotAndVelCoord[2], rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]};
+  measures = {(double)battery.getBatteryLevel(), bmp.getAlt(), bmp.getTemp(),
+              rotAndVelCoord[0], rotAndVelCoord[1], rotAndVelCoord[2],
+              rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]};
+
   buffer.push_back(measures);
 
-  if (fifo.isFull()) {
+  if (fifo.count() > radioInterval / measureInterval) {
     fifo.pop();
   }
   fifo.push({alt, rotAndVelCoord[3], rotAndVelCoord[4], rotAndVelCoord[5]});
@@ -297,5 +297,12 @@ void radioTransmission(){
   if (!radio.packSend(buffer.back())){ // Send most recent data sample
     buzzer.error();
     // Error sending or packing shit
+  }
+}
+
+
+void clearFifo(QueueList<double*>& fifo) {
+  while (!fifo.isEmpty()) {
+    fifo.pop();
   }
 }
