@@ -50,7 +50,8 @@ Buzzer buzzer;
 
 
 //Variables used to control frequency of operations
-unsigned long currTime, measureTime, logTime, radioTime, liftOffTime, touchdownTime; 
+unsigned long currTime, measureTime, logTime, radioTime;
+unsigned long liftOffTime, apogeeTime, reTriggerTime, touchdownTime; 
 int measureInterval;
 constexpr int radioInterval = 500; // = 2Hz
 constexpr int logInterval = 1000; // = 2Hz
@@ -59,11 +60,10 @@ constexpr int logInterval = 1000; // = 2Hz
 constexpr int flightTimeout = 240000; // = 4 minutes (Check cette valeur) .
 // Timeout between PoR and initialization
 constexpr int idleTimeout = 5000;
-// Timeout to start transfering to sdcard after the flight
-constexpr int transferTimeout = 60000; // 60 seconds
-// Timeout to apogee
+// Timeout before the beacon state change after the touchdown
+constexpr int postFTransTimeout = 60000; // 60 seconds
+// Timeout to apogee from liftOff
 constexpr int apogeeTimeout = 20000; // 20 seconds
-
 
 
 void getMeasures();
@@ -75,7 +75,7 @@ void clearFifo(QueueList<FlightData>& fifo);
 void setup() {
   Serial.begin(9600);
   while(!Serial)
-  Serial.println("Ready to rock");
+  Serial.println("Serial monitor ready !");
 
 
 
@@ -93,7 +93,6 @@ void loop() {
     case Idle:
        if(currTime > idleTimeout) {
          state = Init;
-         Serial.println("New state: "); Serial.println(state);
          buzzer.initStart();
        }
        break;
@@ -150,12 +149,6 @@ void loop() {
           break;
         }
       }
-
-      /* Timeout Check  /!\ ONLY IF WE USE MEMORY BEFORE STORING IN THE SD CARD /!\ */
-      if(currTime >= flightTimeout){
-        touchdownTime = currTime;
-        state = PostFTrans;
-      }
       break;
 
     case Ascending:
@@ -180,14 +173,10 @@ void loop() {
     
         if(eventManager.isApogee(fifo)){
           clearFifo(fifo);
+          apogeeTime = currTime;
           state = Descending;
           break;
         }
-      }
-
-      /* Timeout Check  /!\ ONLY IF WE USE MEMORY BEFORE STORING IN THE SD CARD /!\ */
-      if(currTime >= (apogeeTimeout - liftOffTime)){
-        state = PostFTrans;
       }
       break;
 
@@ -199,7 +188,9 @@ void loop() {
         measureTime += measureInterval;
         getMeasures();
 
-        if(eventManager.isReTrigger(measures.altitude) && !eventManager.hasTriggered()){
+        //Check for the release of the main parachute (2nd event redundancy)
+        if(!eventManager.hasTriggered() && eventManager.isReTrigger(measures.altitude)){
+          reTriggerTime = currTime;
           eventManager.trigger();
         }
       }
@@ -222,13 +213,6 @@ void loop() {
           break;
         }
       }
-
-      /* Timeout Check  /!\ ONLY IF WE USE MEMORY BEFORE STORING IN THE SD CARD /!\ */
-      if(currTime >= flightTimeout){
-        touchdownTime = currTime;
-        state = PostFTrans;
-      }
-
       break;
 
     case PostFTrans:
@@ -252,18 +236,18 @@ void loop() {
         radioTransmission();
       }
 
-      // Timeout if touchdown was missed
-      if(currTime >= (touchdownTime + transferTimeout)){
-        storage.sdTransfer();
+      // Timeout before beacon
+      if(currTime >= (touchdownTime + postFTransTimeout)){
+        storage.logFlightInfo(liftOffTime, apogeeTime, reTriggerTime, touchdownTime);
         state = Beacon;
       }
       break;
 
     case Beacon:
       buzzer.beacon();
-      delay(1000);
+      delay(2000);
     default:
-      // C LA MERD
+      state = Idle; //Shouldn't happen but we never know
       break;
   }
 }
@@ -285,21 +269,14 @@ void getMeasures() {
 
   buffer.push_back(measures);
 
-  if (fifo.count() > radioInterval / measureInterval) {
+  while (fifo.count() >= radioInterval / measureInterval) {
     fifo.pop();
   }
-  fifo.push({bmp.getAlt(), mpu.getVelX(), mpu.getVelY(), mpu.getVelZ()});
+  fifo.push(measures);
 }
 
 void logBuffer() {
-  // If we use memory
-  if(!storage.saveMemory(buffer)){
-    buzzer.error(); // Really ?
-    // Error while saving in memory
-  }
-  // If we don't use memory (uncomment)
-  //storage.savaDataSD(buffer);
-
+  storage.savaDataSD(buffer);
   buffer.clear();
 }
 
@@ -310,8 +287,7 @@ void radioTransmission(){
   }
 }
 
-
-void clearFifo(QueueList<double*>& fifo) {
+void clearFifo(QueueList<FlightData>& fifo) {
   while (!fifo.isEmpty()) {
     fifo.pop();
   }

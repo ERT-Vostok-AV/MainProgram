@@ -1,4 +1,4 @@
-#if !defined(FLIGHT_FLIGHT_DATA_H)
+#if !defined(FLIGHT_DATA_H)
 #define FLIGHT_DATA_H
 
 struct FlightData {
