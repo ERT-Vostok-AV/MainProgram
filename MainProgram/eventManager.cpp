@@ -9,11 +9,11 @@
 
 EventManager::EventManager() : triggered(false) {}
 
-bool EventManager::isLiftOff(QueueList<double*> fifo){
+bool EventManager::isLiftOff(QueueList<FlightData> fifo){
 
 }
 
-bool EventManager::isApogee(QueueList<double*> fifo){
+bool EventManager::isApogee(QueueList<FlightData> fifo){
 
 }
 
@@ -21,7 +21,7 @@ bool EventManager::isReTrigger(double alt){
 
 }
 
-bool EventManager::isTouchDown(QueueList<double*> fifo){
+bool EventManager::isTouchDown(QueueList<FlightData> fifo){
 
 }
 

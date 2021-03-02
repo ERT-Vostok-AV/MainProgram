@@ -9,6 +9,7 @@ Tasks :
 #include <Vector.h>
 #include <QueueList.h>
 
+#include "flightData.h"
 #include "bmp280.h"
 #include "mpu6050.h"
 #include "batteryIndicator.h"
@@ -17,6 +18,8 @@ Tasks :
 #include "radioModule.h"
 #include "buzzer.h"
 
+#define BUFFER_ELEMENT_COUNT_MAX 100
+
 enum States{
   Idle, Init, PrefTrans, Ascending, Descending, PostFTrans, Beacon
 };
@@ -24,14 +27,18 @@ enum States{
 // Holds the current state
 States state;
 
+//Data holds 9 double (battery level, altitude, temperature, VelX, VelY, VelZ, RotX, RotY, RotZ)
+FlightData measures;
+
 // Buffer for saving data to be logged
-typedef Vector<double*> Buffer;
-Buffer buffer;
+typedef Vector<FlightData> Buffer;
+FlightData bufferStorageArray[BUFFER_ELEMENT_COUNT_MAX];
+
+Buffer buffer(bufferStorageArray);
 
 // FIFO list for event detection
-QueueList<double*> fifo;
+QueueList<FlightData> fifo;
 
-double measures[9];
 
 Bmp280 bmp;
 Mpu6050 mpu;
@@ -41,6 +48,8 @@ Storage storage;
 RadioModule radio;
 Buzzer buzzer;
 
+
+//Variables used to control frequency of operations
 unsigned long currTime, measureTime, logTime, radioTime, liftOffTime, touchdownTime; 
 int measureInterval;
 constexpr int radioInterval = 500; // = 2Hz
@@ -57,34 +66,32 @@ constexpr int apogeeTimeout = 20000; // 20 seconds
 
 
 
-
-
-
-//int millis(){return 0;} //STUB USELESS PIECE OF SHIT
-//void delay(int time){} //STUB delay
-
 void getMeasures();
 void logBuffer();
 void radioTranssmission();
 
-void clearFifo(QueueList<double*>& fifo);
+void clearFifo(QueueList<FlightData>& fifo);
 
 void setup() {
   Serial.begin(9600);
   while(!Serial)
   Serial.println("Ready to rock");
 
+
+
   currTime = 0;
   logTime = 0;
   radioTime = 0;
   state = Idle;
+
+  Serial.println("Setup done !")
 }
 
 void loop() {
   currTime = millis();
   switch(state){
     case Idle:
-       if(currTime > idleTimeout){
+       if(currTime > idleTimeout) {
          state = Init;
          Serial.println("New state: "); Serial.println(state);
          buzzer.initStart();
@@ -182,7 +189,6 @@ void loop() {
       if(currTime >= (apogeeTimeout - liftOffTime)){
         state = PostFTrans;
       }
-
       break;
 
     case Descending:
@@ -193,7 +199,7 @@ void loop() {
         measureTime += measureInterval;
         getMeasures();
 
-        if(eventManager.isReTrigger((int) altAndTemp[0]) && !eventManager.hasTriggered()){
+        if(eventManager.isReTrigger(measures.altitude) && !eventManager.hasTriggered()){
           eventManager.trigger();
         }
       }
@@ -267,9 +273,15 @@ void getMeasures() {
   mpu.measure();
   battery.measure();
 
-  measures = {battery.getBatteryLevel(), bmp.getAlt(), bmp.getTemp(),
-              mpu.getVelX(), mpu.getVelY(), mpu.getVelZ(),
-              mpu.getRotX(), mpu.getRotX(), mpu.getRotX()};
+  measures.batteryLevel = battery.getBatteryLevel();
+  measures.altitude = bmp.getAlt();
+  measures.temperature = bmp.getTemp();
+  measures.velocity[0] = mpu.getVelX();
+  measures.velocity[1] = mpu.getVelY();
+  measures.velocity[2] = mpu.getVelZ();
+  measures.rotation[0] = mpu.getRotX();
+  measures.rotation[1] = mpu.getRotY();
+  measures.rotation[2] = mpu.getRotZ();
 
   buffer.push_back(measures);
 

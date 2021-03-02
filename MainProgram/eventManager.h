@@ -5,15 +5,17 @@
 #include <QueueList.h>
 #include <Vector.h>
 
+#include "flightData.h"
+
 
 class EventManager {
 
 public:
     EventManager();
 
-    bool isLiftOff(QueueList<double*> fifo);
-    bool isTouchDown(QueueList<double*> fifo);
-    bool isApogee(QueueList<double*> fifo);
+    bool isLiftOff(QueueList<FlightData> fifo);
+    bool isTouchDown(QueueList<FlightData> fifo);
+    bool isApogee(QueueList<FlightData> fifo);
     bool isReTrigger(double alt);
     bool trigger();
     bool hasTriggered();
