@@ -4,7 +4,7 @@ bool RadioModule::begin(){
     //TODO Initialisation
 }
 
-bool RadioModule::pack(double* data){
+bool RadioModule::pack(FlightData data){
     
 }
 
@@ -12,7 +12,7 @@ bool RadioModule::send(){
 
 }
 
-bool RadioModule::packSend(double* data){
+bool RadioModule::packSend(FlightData data){
     pack(data);
     send();
 }

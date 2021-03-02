@@ -1,5 +1,7 @@
 #include "buzzer.h"
 
+Buzzer::Buzzer(){}
+
 void Buzzer::beacon(){
     
     // bip bip bip biiiip biiiip biiiip bip bip bip (a.k.a SOS)

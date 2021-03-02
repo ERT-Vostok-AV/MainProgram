@@ -18,7 +18,7 @@ bool EventManager::isApogee(QueueList<FlightData> fifo){
 }
 
 bool EventManager::isReTrigger(double alt){
-  return alt <= 300 //SOME RANDOM ALTITUDE NEED TO CHECK
+  return alt <= 300; //SOME RANDOM ALTITUDE NEED TO CHECK
 }
 
 bool EventManager::isTouchDown(QueueList<FlightData> fifo){

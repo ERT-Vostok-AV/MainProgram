@@ -6,12 +6,13 @@
   [bat3, alt3, temp3, accX3, accY3, accZ3, rotX3, rotY3, rotZ3],
   ...]
 */
+Storage::Storage(){}
 
 bool Storage::saveSD(const Buffer& buffer){
     
 }
 
-bool Storage::saveMemory(const Buffer& buffer){
+bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned longreTriggerTime, unsigned long touchdownTime){
 
 }
 

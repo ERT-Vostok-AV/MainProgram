@@ -2,16 +2,16 @@
 #define RADIO_MODULE_H
 
 #include <Vector.h>
-
+#include "flightData.h"
 
 class RadioModule {
 
 public:
     bool begin();
 
-    bool pack(double* data);
+    bool pack(FlightData data);
     bool send();
-    bool packSend(double* data);
+    bool packSend(FlightData data);
 private:
     String packedData;
 };

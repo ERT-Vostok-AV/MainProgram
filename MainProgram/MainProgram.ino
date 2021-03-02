@@ -84,7 +84,7 @@ void setup() {
   radioTime = 0;
   state = Idle;
 
-  Serial.println("Setup done !")
+  Serial.println("Setup done !");
 }
 
 void loop() {
@@ -276,7 +276,7 @@ void getMeasures() {
 }
 
 void logBuffer() {
-  storage.savaDataSD(buffer);
+  storage.saveSD(buffer);
   buffer.clear();
 }
 
