@@ -46,7 +46,7 @@ BatteryIndicator battery;
 EventManager eventManager;
 Storage storage;
 RadioModule radio;
-Buzzer buzzer;
+Buzzer buzzer(9); // may be make it a variable
 
 
 //Variables used to control frequency of operations
