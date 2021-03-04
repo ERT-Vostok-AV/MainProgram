@@ -1,7 +1,6 @@
 #include "mpu6050.h"
 #include <MPU6050_light.h>
 #include "Arduino.h"
-//Is it normal that my computer doesn't find the libraries ?
 
 MPU6050 mpuAda(Wire);
 
