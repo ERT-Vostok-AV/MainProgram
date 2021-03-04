@@ -1,18 +1,16 @@
 #include "batteryIndicator.h"
+#include "Arduino.h"
 
-BatteryIndicator::BatteryIndicator() : Sensor(0x00){}
+BatteryIndicator::BatteryIndicator(int pinC) : Sensor(0x00){pin = pinC;}
 
 
 void BatteryIndicator::measure() {
-    //TODO Récupère les données brutes, les traites si besoin
-    //et modifie l'attribut du niveau de batterie
-
-
-    //(remplacer les 0 par la valeurs calculée)
+  batteryLevel = (100 / 921.5) * analogRead(pin);
 }
 
 bool BatteryIndicator::begin(){
-    //TODO initialisation et calibration
+  pinMode(pin, INPUT);
+  return true;
 }
 
 //accesseur

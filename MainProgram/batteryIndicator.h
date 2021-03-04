@@ -11,7 +11,7 @@ A class that represents the battery indicator aboard the rocket
 
 class BatteryIndicator : public Sensor {
 public:
-    BatteryIndicator();
+    BatteryIndicator(int pinC);
 
     bool begin();
 
@@ -20,7 +20,8 @@ public:
     double getBatteryLevel();
 
 private:
-    double batteryLevel; // ranges from 0 to 100 %
+    int batteryLevel; // ranges from 0 to 100 %
+    int pin;
 };
 
 
