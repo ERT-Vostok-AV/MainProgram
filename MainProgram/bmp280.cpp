@@ -1,52 +1,46 @@
 #include "bmp280.h"
 #include <Adafruit_BMP280.h>
 
-Bmp280::Bmp280() : Sensor(0x68) {}
+
 
 Adafruit_BMP280 bmpAda;
-int nbrStartPressure = 200; //nombre d'échantillons pour la calibration de pression
+int nSamples = 100; //nombre d'échantillons pour la calibration de pression
 double arrondiAltitude;
+
+
+Bmp280::Bmp280() : Sensor(0x76) {}
 
 bool Bmp280::begin() {
     //initialisation et calibration
     bool success = bmpAda.begin(i2cAddress);
-    startPressure = getStartPressure();
+    if(success){
+      bmpAda.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                        Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                        Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                        Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                        Adafruit_BMP280::STANDBY_MS_1); 
+      getStartPressure();
+      Serial.print("Start pressure: "); Serial.println(startPressure);
+    }
 
     return success;
 }
 
 void Bmp280::measure(){
-    //altitude
-    arrondiAltitude = (double) bmpAda.readAltitude(startPressure); // arrondir l'altitude
-
-    if(arrondiAltitude > 2048){
-		arrondiAltitude = 2048;
-	}
-	else if (arrondiAltitude < 0){
-		arrondiAltitude = 0;
-	}
-
-    altitude = arrondiAltitude;
-
-    //temperature
-    temperature = bmpAda.readTemperature(); // en °C
-    
-    if(temperature > 64){
-		temperature = 64;
-	}
-	else if (temperature < -64){
-		temperature = -64;
-	}
+    //Get the altitude and constrains it to the interval [0, 2048]
+    altitude = clip(bmpAda.readAltitude(startPressure), 0.0, 2048.0);
+    // Get the temperature and constrains it to the interval [-64, 64]
+    temperature = clip(bmpAda.readTemperature(), -64.0, 64.0);
 }
 
-double Bmp280::getStartPressure(){
+void Bmp280::getStartPressure(){
     
-	double moyennePression = 0;
-	for(int i = 0; i<=nbrStartPressure; ++i){
-		moyennePression += bmpAda.readPressure() / nbrStartPressure;
+	startPressure = 0;
+	for(int i = 0; i < nSamples; i++){
+		startPressure += bmpAda.readPressure();
 	}
 
-    return moyennePression / 100; //division par 100 pour l'avoir en hP
+  startPressure /= (nSamples * 100); //division par 100 pour l'avoir en hP
 }
 
 //accesseurs
@@ -56,4 +50,17 @@ double Bmp280::getAlt() {
 
 double Bmp280::getTemp() {
     return temperature;
+}
+
+/**
+ * Constrains the value val withing the value lo and hi.
+ */
+double Bmp280::clip(double val, double lo, double hi){
+  if(val < lo){
+    return lo;
+  } else if(val > hi){
+    return hi;
+  } else {
+    return val;
+  }
 }

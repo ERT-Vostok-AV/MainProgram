@@ -22,12 +22,13 @@ public:
     double getTemp();
 
 private:
-    double getStartPressure();
-    double startPressure;
+    void getStartPressure();
+    float startPressure;
 
     double altitude; // ranges from 0 to 2048 m
     double temperature; //ranges from -64 to 64 °C
+
+    double clip(double val, double lo, double hi); // Clip the value val in [lo, hi]
 };
 
 #endif // BMP280_H
-
