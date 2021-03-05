@@ -1,6 +1,11 @@
 #include "radioModule.h"
 
-bool RadioModule::begin(){
+/**Error codes:
+ * 0 no error
+ * 
+ */
+
+int RadioModule::begin(){
     //TODO Initialisation
 }
 

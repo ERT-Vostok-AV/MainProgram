@@ -7,6 +7,11 @@
 #endif
 #include "Arduino.h"
 
+/**Error codes:
+ * 0 no error
+ * devStatus Check DMP documentation
+ */
+
 MPU6050 mpuC(0x68);
 uint8_t devStatus;
 uint16_t packetSize;
@@ -20,11 +25,11 @@ float ypr[3];
 
 Mpu6050::Mpu6050() : Sensor(0x68) {}
 double gXOff, gYOff, gZOff, aXOff, aYOff, aZOff;
-double currTime, prevTime, deltaTime;
+double currTimeM, prevTime, deltaTime;
 // Ratio to convert radians to degrees.
 
 
-bool Mpu6050::begin(){
+int Mpu6050::begin(){
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
       Wire.begin();
       Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
@@ -32,7 +37,6 @@ bool Mpu6050::begin(){
       Fastwire::setup(400, true);
     #endif
 
-    Serial.println(F("Initializing mpuC.."));
     mpuC.initialize();
   
     Serial.println(F("Testing connection.."));
@@ -44,15 +48,13 @@ bool Mpu6050::begin(){
     if(devStatus == 0){
       mpuC.CalibrateAccel(6);
       mpuC.CalibrateGyro(6);
-      mpuC.PrintActiveOffsets();
       
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
+      return devStatus;
     } else {
-      Serial.print(F("DMP init failed with code: ("));
-      Serial.print(devStatus);
-      Serial.print(F(")"));
+      return devStatus;
     }
 }
 
@@ -77,10 +79,6 @@ void Mpu6050::measure(){
     
 }
 
-// CompuCte offset by averarging over a 100 measures.
-void Mpu6050::getOffsets(){
-    
-}
 
 //Getter for the velocity and orientation
 double Mpu6050::getRotX() {return degX;}

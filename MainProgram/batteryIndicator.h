@@ -13,7 +13,7 @@ class BatteryIndicator : public Sensor {
 public:
     BatteryIndicator(int pinC);
 
-    bool begin();
+    int begin();
 
     virtual void measure() override;
     

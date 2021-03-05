@@ -14,7 +14,7 @@ class Bmp280 : public Sensor {
 public:
     Bmp280();
     
-    bool begin();
+    int begin();
 
     virtual void measure() override;
 

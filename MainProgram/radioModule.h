@@ -7,7 +7,7 @@
 class RadioModule {
 
 public:
-    bool begin();
+    int begin();
 
     bool pack(FlightData data);
     bool send();

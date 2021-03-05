@@ -7,7 +7,7 @@ Tasks :
 */
 
 #include <Vector.h>
-#include <QueueList.h>
+#include <QueueList.h> //https://playground.arduino.cc/Code/QueueList/ 
 
 #include "flightData.h"
 #include "bmp280.h"
@@ -20,12 +20,19 @@ Tasks :
 
 #define BUFFER_ELEMENT_COUNT_MAX 100
 
+//Pinout
+#define BATTERY_PIN A7
+#define BUZZER_PIN 9
+
 enum States{
   Idle, Init, PrefTrans, Ascending, Descending, PostFTrans, Beacon
 };
 
 // Holds the current state
 States state;
+
+//Init status of modules for debugging see the modules code for error code documentation
+int initStatus;
 
 //Data holds 9 double (battery level, altitude, temperature, VelX, VelY, VelZ, RotX, RotY, RotZ)
 FlightData measures;
@@ -42,15 +49,15 @@ QueueList<FlightData> fifo;
 
 Bmp280 bmp;
 Mpu6050 mpu;
-BatteryIndicator battery;
+BatteryIndicator battery(BATTERY_PIN);
 EventManager eventManager;
 Storage storage;
 RadioModule radio;
-Buzzer buzzer(9); // may be make it a variable
+Buzzer buzzer(BUZZER_PIN); // may be make it a variable
 
 
 //Variables used to control frequency of operations
-unsigned long currTime, measureTime, logTime, radioTime;
+unsigned long currTime, setupEndTime, measureTime, logTime, radioTime;
 unsigned long liftOffTime, apogeeTime, reTriggerTime, touchdownTime; 
 int measureInterval;
 constexpr int radioInterval = 500; // = 2Hz
@@ -74,46 +81,48 @@ void clearFifo(QueueList<FlightData>& fifo);
 
 void setup() {
   Serial.begin(9600);
-  while(!Serial)
+  while(!Serial);
   Serial.println("Serial monitor ready !");
 
 
-
-  currTime = 0;
-  logTime = 0;
-  radioTime = 0;
   state = Idle;
-
+  
   Serial.println("Setup done !");
+  setupEndTime = millis();
 }
 
 void loop() {
-  currTime = millis();
+  currTime = millis() - setupEndTime;
   switch(state){
     case Idle:
-       if(currTime > idleTimeout) {
-         state = Init;
-         buzzer.initStart();
-       }
-       break;
+      if(currTime > idleTimeout) {
+        state = Init;
+        buzzer.initStart();
+        Serial.println("Starting initialisation");
+      }
+      break;
 
     case Init:
       //pleins de ifs pour le testation
-      if (!bmp.begin()) {
+      if (!(initStatus = bmp.begin()) == 0) {
         buzzer.error();
-        // Error starting bmp280. Serial print pour testing
+        Serial.print("Error starting BMP280. Error code : ");
+        Serial.println(initStatus);
       }
-      if (!mpu.begin()) {
+      if (!(initStatus = mpu.begin()) == 0) {
         buzzer.error();
-        // Error starting mpu6050. Serial print pour testing
+        Serial.print("Error starting MPU6050. Error code : ");
+        Serial.println(initStatus);
       }
-      if (!battery.begin()) {
+      if (!(initStatus = battery.begin()) == 0) {
         buzzer.error();
-        // Error starting battery indicator. Serial print pour testing
+        Serial.print("Error starting BatteryIndicator. Error code : ");
+        Serial.println(initStatus);
       }
-      if (!radio.begin()) {
+      if (!(initStatus = radio.begin()) == 0) {
         buzzer.error();
-        // Error starting radio. Serial print pour testing
+        Serial.print("Error starting RadioModule. Error code : ");
+        Serial.println(initStatus);
       }
 
       // If no initilisation errors, change state

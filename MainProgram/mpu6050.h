@@ -14,7 +14,7 @@ class Mpu6050 : public Sensor {
 public:
     Mpu6050();
 
-    bool begin();
+    int begin();
     
     double getRotX();
     double getRotY();
@@ -26,7 +26,6 @@ public:
     virtual void measure() override;
     
 private:
-    void getOffsets();
     // 16 bit askip et en [m/s]
     double velX, velY, velZ; //velocity
     double degX, degY, degZ; //rotation

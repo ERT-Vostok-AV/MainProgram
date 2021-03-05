@@ -1,7 +1,10 @@
 #include "bmp280.h"
 #include <Adafruit_BMP280.h>
 
-
+/** Error codes:
+ * 0 no error
+ * 1 bmp sensor error
+ */
 
 Adafruit_BMP280 bmpAda;
 int nSamples = 100; //nombre d'échantillons pour la calibration de pression
@@ -10,10 +13,9 @@ double arrondiAltitude;
 
 Bmp280::Bmp280() : Sensor(0x76) {}
 
-bool Bmp280::begin() {
+int Bmp280::begin() {
     //initialisation et calibration
-    bool success = bmpAda.begin(i2cAddress);
-    if(success){
+    if(bmpAda.begin(i2cAddress)){
       bmpAda.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
                         Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
                         Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
@@ -21,9 +23,9 @@ bool Bmp280::begin() {
                         Adafruit_BMP280::STANDBY_MS_1); 
       getStartPressure();
       Serial.print("Start pressure: "); Serial.println(startPressure);
+      return 0;
     }
-
-    return success;
+    return 1;
 }
 
 void Bmp280::measure(){
