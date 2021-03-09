@@ -16,7 +16,7 @@ public:
 
     int begin();
 
-    uint8_t getFifo();
+    void printQuat();
     double getRotX();
     double getRotY();
     double getRotZ();
@@ -27,6 +27,8 @@ public:
     virtual void measure() override;
     
 private:
+
+    void quatToAngle();
     // 16 bit askip et en [m/s]
     uint8_t *teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
     double velX, velY, velZ; //velocity

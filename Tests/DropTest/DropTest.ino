@@ -4,15 +4,14 @@
 #include <Keypad.h>
 
 
-#define LIFTOFF_THRESH 1
-#define APOGEE_THRESH 13
-#define RECOVERY_THRESH 7
+#define LIFTOFF_THRESH 0.5
+#define APOGEE_THRESH 2
+#define RECOVERY_THRESH 1
 
 Buzzer buzzer(10);
 Bmp280 bmp;
-Mpu6050 mpu;
+//Mpu6050 mpu;
 
-uint8_t teapotPacket[14];
 
 const byte ROWS = 4; //four rows
 const byte COLS = 4; //four columns
@@ -27,7 +26,7 @@ byte rowPins[ROWS] = {6, 7, 8, 9}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {2, 3, 4, 5}; //connect to the column pinouts of the keypad
 
 //initialize an instance of class NewKeypad
-Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+//Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
 
 constexpr int radioInterval = 500; // = 2Hz
 unsigned long currTime, setupEndTime, radioTime, liftOffTime, apogeeTime, touchdownTime;
@@ -48,23 +47,26 @@ void setup(){
   while(!Serial);
   Serial.println("Serial monitor ready !");
   state = Idle;
-  
+  /*
+  if(mpu.begin() != 0){
+    Serial.println("Couldn't init MPU");
+  }
+  */
   Serial.println("Setup done !");
   buzzer.initStart();
   setupEndTime = millis();
-  mpu.begin();
 }
 
 void loop(){
-  mpu.measure();
-  teapotPacket = mpu.getFifo();
-  Serial.write(teapotPacket, 14);
+  //mpu.measure();
+  //mpu.printQuat();
 
   /*
   char customKey = customKeypad.getKey();
   if(customKey == '0'){
     apogeeOverride = true;
   }
+  */
   
   currTime = millis() - setupEndTime;
   switch(state){
@@ -156,5 +158,5 @@ void loop(){
       flightDone = true;
       state = Idle;
   }
-  */
+  
 }

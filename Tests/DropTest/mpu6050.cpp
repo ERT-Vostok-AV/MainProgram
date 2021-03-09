@@ -19,7 +19,7 @@ uint16_t fifoCount;
 uint8_t fifoBuffer[64];
 Quaternion q;   
 VectorFloat gravity; 
-float ypr[3], euler[3]; 
+float angles[4], euler[3]; 
 
 #define radToDeg 57.2958
 
@@ -61,21 +61,31 @@ int Mpu6050::begin(){
 // Get the most recent values and stores them.
 void Mpu6050::measure(){
   
-    teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-    /*
+    //teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
+    
     mpuC.resetFIFO();
 
     fifoCount = mpuC.getFIFOCount();
   
     while(fifoCount < packetSize) fifoCount = mpuC.getFIFOCount();
-    */
+    
     mpuC.getFIFOBytes(fifoBuffer, packetSize);
-    //mpuC.dmpGetGravity(&gravity, &q);
-    //mpuC.dmpGetQuaternion(&q, fifoBuffer);
-    //mpuC.dmpGetEuler(euler, &q);
-    //mpuC.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
     
+    float quat[4];
+    quat[0] = (fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f;
+    quat[1] = (fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f;
+    quat[2] = (fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f;
+    quat[3] = (fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f;
+    for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
+
+    q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
+    
+    //mpuC.dmpGetQuaternion(&q, fifoBuffer);
+    
+    
+    
+    /**
     teapotPacket[2] = fifoBuffer[0];
     teapotPacket[3] = fifoBuffer[1];
     teapotPacket[4] = fifoBuffer[4];
@@ -84,21 +94,67 @@ void Mpu6050::measure(){
     teapotPacket[7] = fifoBuffer[9];
     teapotPacket[8] = fifoBuffer[12];
     teapotPacket[9] = fifoBuffer[13];
-    
+    */
 
     /*
     degX = euler[0] * 180/M_PI;
     degY = euler[1] * 180/M_PI;
     degZ = euler[2] * 180/M_PI;
     */
-    degX = ypr[0];
-    degY = ypr[1];
-    degZ = ypr[2];
+    
+    //degX = ypr[0];
+    //degY = ypr[1];
+    //degZ = ypr[2];
 
 }
 
-uint8_t Mpu6050::getFifo(){
-  return teapotPacket;
+void Mpu6050::quatToAngle(){
+  float angle = acos(q.w) * 2;
+  float dividend = sqrt(1 - (q.w * q.w));
+  if(dividend < 0.001){
+    angles[1] = 1;
+    angles[2] = 0;
+    angles[3] = 0;
+  } else {
+    angles[1] = q.x / dividend;
+    angles[2] = q.y / dividend;
+    angles[3] = q.z / dividend;
+  }
+  angles[0] = angle;
+    
+  /**
+  // Roll calculation
+  double tanUp = 2 * (q.w * q.x + q.y * q.z);
+  double tanDown = 1 - 2 * (q.x * q.x + q.y * q.y);
+  ypr[2] = atan2(tanUp, tanDown);
+
+  // Yaw calculation
+  tanUp = 2 * (q.w * q.z + q.y * q.x);
+  tanDown = 1 - 2 * (q.y * q.y + q.z * q.z);
+  ypr[0] = atan2(tanUp, tanDown);
+
+  // Pitch calculation
+  double sinV = 2 * (q.w * q.y + q.x * q.z);
+  if (abs(sinV) >= 1){
+    ypr[1] = copysign(M_PI / 2 , sinV);
+  } else 
+    ypr[1] = asin(sinV);
+  */
+}
+
+void Mpu6050::printQuat(){
+  quatToAngle();
+  Serial.print(angles[0] ); Serial.print(" ");
+  Serial.print(angles[1] ); Serial.print(" ");
+  Serial.print(angles[2] ); Serial.print(" ");
+  Serial.print(angles[3] ); Serial.println();
+
+  /*
+  Serial.print((fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f); Serial.println("");
+  */
 }
 
 //Getter for the velocity and orientation
