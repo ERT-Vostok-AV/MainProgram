@@ -22,7 +22,7 @@ int Storage::begin() {
   }
 }
 
-bool initLog(){
+bool Storage::initLog(){
    dataFile = SD.open("data.txt", FILE_WRITE);
    if(dataFile){
     dataFile.println("--------------- VOSTOK FLIGHT DATA ---------------");
@@ -46,21 +46,28 @@ bool initLog(){
 }
 
 bool Storage::saveSD(const Buffer& buffer){
+  Serial.println("imhere");
     if (dataFile) {
-      for (i = 0; i > buffer.size(); i++) {
-        dataFile.print("battery"); dataFile.print(separator);
-        dataFile.print("alt"); dataFile.print(separator);
-        dataFile.print("temp"); dataFile.print(separator);
-        dataFile.print("velX"); dataFile.print(separator);
-        dataFile.print("velY"); dataFile.print(separator);
-        dataFile.print("velZ"); dataFile.print(separator);
-        dataFile.print("rotX"); dataFile.print(separator);
-        dataFile.print("rotY"); dataFile.print(separator);
-        dataFile.println("rotZ");
+      for (unsigned i = 0; i < buffer.size(); i++) {
+        dataFile.print(String(buffer[i].batteryLevel)); dataFile.print(separator);
+        dataFile.print(String(buffer[i].altitude)); dataFile.print(separator);
+        dataFile.print(String(buffer[i].temperature)); dataFile.print(separator);
+        dataFile.print(String(buffer[i].velocity[0])); dataFile.print(separator);
+        dataFile.print(String(buffer[i].velocity[1])); dataFile.print(separator);
+        dataFile.print(String(buffer[i].velocity[2])); dataFile.print(separator);
+        dataFile.print(String(buffer[i].rotation[0])); dataFile.print(separator);
+        dataFile.print(String(buffer[i].rotation[1])); dataFile.print(separator);
+        dataFile.println(String(buffer[i].rotation[2]));
       }
     }
 }
 
-bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned longreTriggerTime, unsigned long touchdownTime){
-
+bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime){
+  dataFile.println("--------------- END OF FLIGHT ---------------");
+  dataFile.println("Flight summary :");
+  dataFile.print("Lift off time : "); dataFile.println(liftOffTime);
+  dataFile.print("Apogee time : "); dataFile.println(apogeeTime);
+  dataFile.print("Recovery trigger time : "); dataFile.println(reTriggerTime);
+  dataFile.print("Touchdown time : "); dataFile.println(touchdownTime);
+  dataFile.close();
 }

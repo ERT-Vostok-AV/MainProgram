@@ -13,7 +13,7 @@ class Storage {
 public: 
     Storage();
 
-    begin();
+    int begin();
 
     //creates and open a data file
     bool initLog();
@@ -21,7 +21,7 @@ public:
     bool saveSD(const Buffer& buffer);
 
     //log last data info and closes the data file
-    bool logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned longreTriggerTime, unsigned long touchdownTime);
+    bool logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime);
 private:
     File dataFile;
     char separator = '\t';
