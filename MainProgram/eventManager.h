@@ -13,14 +13,15 @@ class EventManager {
 public:
     EventManager();
 
-    bool isLiftOff(QueueList<FlightData> fifo);
-    bool isTouchDown(QueueList<FlightData> fifo);
-    bool isApogee(QueueList<FlightData> fifo);
+    bool isLiftOff(double alt, double velZ);
+    bool isTouchDown(double alt, double velZ);
+    bool isApogee(double alt, double velZ);
     bool isReTrigger(double alt);
-    bool trigger();
+    void trigger();
     bool hasTriggered();
 private:
     bool triggered;
+	double maxAlt = 0;
 };
 
 
