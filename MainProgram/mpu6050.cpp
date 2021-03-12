@@ -60,15 +60,13 @@ int Mpu6050::begin(){
 
 // Get the most recent values and stores them.
 void Mpu6050::measure(){
-  
-    //teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-    
-    mpuC.resetFIFO();
 
+    mpuC.resetFIFO();
     fifoCount = mpuC.getFIFOCount();
   
     while(fifoCount < packetSize) fifoCount = mpuC.getFIFOCount();
     
+    // Gatter the latest measures in the fifo
     mpuC.getFIFOBytes(fifoBuffer, packetSize);
 
     
@@ -79,7 +77,7 @@ void Mpu6050::measure(){
     quat[3] = (fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f;
     for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
 
-    q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
+    //q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
 }
 
 void Mpu6050::quatToAngle(){
