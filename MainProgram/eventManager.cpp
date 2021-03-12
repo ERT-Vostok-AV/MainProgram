@@ -1,6 +1,7 @@
 #include "eventManager.h"
 
 
+
 const double LIFTOFFALTITUDE = 20;			// Altitude minimum pour détecter le décollage
 const double LIFTOFFSPEED = 2;				// Vitesse minimum pour le détection du décollage.
 const double APOGEESPEEDCHANGE = -1;		// Idée c'est d'être sûr que la vitesse horizontale est bien négatif, et donc que l'apogée est passé
@@ -25,7 +26,7 @@ bool EventManager::isApogee(double alt, double velZ){
 	bool data1 = velZ < APOGEESPEEDCHANGE;					// détecte vitesse horizontale négative
 	bool data2 = (maxAlt-APOGEEDIFFERENCEALTITUDE) > alt;	// détecte altitude qui redescent
 	return data1 or data2;
-}
+	}
 
 bool EventManager::isReTrigger(double alt){
 	return alt <= TRIGGERFOREMATCHALTITUDE; //SOME RANDOM ALTITUDE NEED TO CHECK
