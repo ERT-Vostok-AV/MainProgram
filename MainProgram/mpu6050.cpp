@@ -17,7 +17,10 @@ uint8_t devStatus;
 uint16_t packetSize;
 uint16_t fifoCount;
 uint8_t fifoBuffer[64];
-Quaternion q;   
+Quaternion q;           // [w, x, y, z]         quaternion container
+VectorInt16 aa;         // [x, y, z]            accel sensor measurements
+VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
+VectorInt16 aaWorld;
 VectorFloat gravity; 
 float angles[4], euler[3]; 
 

@@ -1,5 +1,8 @@
 #if !defined(STORAGE_H)
 #define STORAGE_H
+
+#include <SPI.h>
+#include <SD.h>
 #include <Vector.h>
 #include "flightData.h"
 
@@ -10,10 +13,16 @@ class Storage {
 public: 
     Storage();
 
-    bool logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned longreTriggerTime, unsigned long touchdownTime);
+    //init sd card, create and open a data file
+    int begin();
+
     bool saveSD(const Buffer& buffer);
-    bool sdTransfer();
-private: 
+
+    //log last data info and closes the data file
+    bool logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime);
+private:
+    File dataFile;
+    char separator = '\t';
 };
 
 

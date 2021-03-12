@@ -124,6 +124,11 @@ void loop() {
         Serial.print("Error starting RadioModule. Error code : ");
         Serial.println(initStatus);
       }
+      if (!(initStatus = storage.begin()) == 0) {
+        buzzer.error();
+        Serial.print("Error starting Storage module. Error code : ");
+        Serial.println(initStatus);
+      }
 
       // If no initilisation errors, change state
 
