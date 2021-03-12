@@ -19,7 +19,7 @@ uint16_t fifoCount;
 uint8_t fifoBuffer[64];
 Quaternion q;   
 VectorFloat gravity; 
-float ypr[3]; 
+float angles[4], euler[3]; 
 
 #define radToDeg 57.2958
 
@@ -60,25 +60,57 @@ int Mpu6050::begin(){
 
 // Get the most recent values and stores them.
 void Mpu6050::measure(){
+  
+    //teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
+    
     mpuC.resetFIFO();
 
     fifoCount = mpuC.getFIFOCount();
   
     while(fifoCount < packetSize) fifoCount = mpuC.getFIFOCount();
-  
+    
     mpuC.getFIFOBytes(fifoBuffer, packetSize);
-  
-    mpuC.dmpGetQuaternion(&q, fifoBuffer);
-    mpuC.dmpGetGravity(&gravity, &q);
-    mpuC.dmpGetYawPitchRoll(ypr, &q, &gravity);
-  
-    degZ = ypr[0] * 180/M_PI;
-    degY = ypr[1] * 180/M_PI;
-    degZ = ypr[2] * 180/M_PI;
 
     
+    float quat[4];
+    quat[0] = (fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f;
+    quat[1] = (fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f;
+    quat[2] = (fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f;
+    quat[3] = (fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f;
+    for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
+
+    q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
 }
 
+void Mpu6050::quatToAngle(){
+  float angle = acos(quat[0]) * 2;
+  float dividend = sqrt(1 - (quat[0] * quat[0]));
+  if(dividend < 0.001){ // to avoid division by 0
+    angles[1] = 1;
+    angles[2] = 0;
+    angles[3] = 0;
+  } else {
+    angles[1] = quat[1] / dividend;
+    angles[2] = quat[2] / dividend;
+    angles[3] = quat[3] / dividend;
+  }
+  angles[0] = angle;
+}
+
+void Mpu6050::printQuat(){
+  quatToAngle();
+  Serial.print(angles[0] ); Serial.print(" ");
+  Serial.print(angles[1] ); Serial.print(" ");
+  Serial.print(angles[2] ); Serial.print(" ");
+  Serial.print(angles[3] ); Serial.println();
+
+  /*
+  Serial.print((fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f); Serial.print(" ");
+  Serial.print((fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f); Serial.println("");
+  */
+}
 
 //Getter for the velocity and orientation
 double Mpu6050::getRotX() {return degX;}

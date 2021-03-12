@@ -80,66 +80,21 @@ void Mpu6050::measure(){
     for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
 
     q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
-    
-    //mpuC.dmpGetQuaternion(&q, fifoBuffer);
-    
-    
-    
-    /**
-    teapotPacket[2] = fifoBuffer[0];
-    teapotPacket[3] = fifoBuffer[1];
-    teapotPacket[4] = fifoBuffer[4];
-    teapotPacket[5] = fifoBuffer[5];
-    teapotPacket[6] = fifoBuffer[8];
-    teapotPacket[7] = fifoBuffer[9];
-    teapotPacket[8] = fifoBuffer[12];
-    teapotPacket[9] = fifoBuffer[13];
-    */
-
-    /*
-    degX = euler[0] * 180/M_PI;
-    degY = euler[1] * 180/M_PI;
-    degZ = euler[2] * 180/M_PI;
-    */
-    
-    //degX = ypr[0];
-    //degY = ypr[1];
-    //degZ = ypr[2];
-
 }
 
 void Mpu6050::quatToAngle(){
-  float angle = acos(q.w) * 2;
-  float dividend = sqrt(1 - (q.w * q.w));
-  if(dividend < 0.001){
+  float angle = acos(quat[0]) * 2;
+  float dividend = sqrt(1 - (quat[0] * quat[0]));
+  if(dividend < 0.001){ // to avoid division by 0
     angles[1] = 1;
     angles[2] = 0;
     angles[3] = 0;
   } else {
-    angles[1] = q.x / dividend;
-    angles[2] = q.y / dividend;
-    angles[3] = q.z / dividend;
+    angles[1] = quat[1] / dividend;
+    angles[2] = quat[2] / dividend;
+    angles[3] = quat[3] / dividend;
   }
   angles[0] = angle;
-    
-  /**
-  // Roll calculation
-  double tanUp = 2 * (q.w * q.x + q.y * q.z);
-  double tanDown = 1 - 2 * (q.x * q.x + q.y * q.y);
-  ypr[2] = atan2(tanUp, tanDown);
-
-  // Yaw calculation
-  tanUp = 2 * (q.w * q.z + q.y * q.x);
-  tanDown = 1 - 2 * (q.y * q.y + q.z * q.z);
-  ypr[0] = atan2(tanUp, tanDown);
-
-  // Pitch calculation
-  double sinV = 2 * (q.w * q.y + q.x * q.z);
-  if (abs(sinV) >= 1){
-    ypr[1] = copysign(M_PI / 2 , sinV);
-  } else 
-    ypr[1] = asin(sinV);
-  */
 }
 
 void Mpu6050::printQuat(){

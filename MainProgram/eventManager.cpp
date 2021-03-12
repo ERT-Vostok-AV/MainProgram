@@ -3,7 +3,7 @@
 /* Structure de la fifo //outdated
   [[alt1, accX1, accY1, accZ1],
   [alt2, accX2, accY2, accZ2],
-  [alt3, accX3, accY3, accZ3],
+  [alt3, accX, accY3, accZ3],
   ...]
 */
 
@@ -14,7 +14,7 @@ bool EventManager::isLiftOff(QueueList<FlightData> fifo){
 }
 
 bool EventManager::isApogee(QueueList<FlightData> fifo){
-
+  
 }
 
 bool EventManager::isReTrigger(double alt){
