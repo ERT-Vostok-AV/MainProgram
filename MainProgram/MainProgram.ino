@@ -151,7 +151,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
 
-        if(eventManager.isLiftOff(fifo)){
+        if(eventManager.isLiftOff(buffer.back().altitude , buffer.back().velocity[3])){  
           clearFifo(fifo);
           liftOffTime = currTime;
           state = Ascending;
@@ -180,7 +180,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
     
-        if(eventManager.isApogee(fifo)){
+        if(eventManager.isApogee(buffer.back().altitude , buffer.back().velocity[3])){
           clearFifo(fifo);
           apogeeTime = currTime;
           state = Descending;
@@ -215,7 +215,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
     
-        if(eventManager.isTouchDown(fifo)){
+        if(eventManager.isTouchDown(buffer.back().altitude,buffer.back().velocity[3])){
           clearFifo(fifo);
           touchdownTime = currTime;
           state = PostFTrans;
