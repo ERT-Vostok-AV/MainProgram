@@ -38,20 +38,29 @@ int Mpu6050::begin(){
     #endif
 
     mpuC.initialize();
+    
+    
   
     Serial.println(F("Testing connection.."));
     Serial.println(mpuC.testConnection() ? F("Success") : F("Failed"));
   
     Serial.println(F("Initializing DMP..."));
     devStatus = mpuC.dmpInitialize();
-  
+
+    mpuC.setXGyroOffset(-81);
+    mpuC.setYGyroOffset(22);
+    mpuC.setZGyroOffset(5);
+    mpuC.setXAccelOffset(-2668); // 1688 factory default for my test chip
+    mpuC.setYAccelOffset(-1373);
+    mpuC.setZAccelOffset(1280);
     if(devStatus == 0){
-      mpuC.CalibrateAccel(6);
-      mpuC.CalibrateGyro(6);
+      //puC.CalibrateAccel(6);
+      //mpuC.CalibrateGyro(6);
       
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
+      mpuC.PrintActiveOffsets();
       return devStatus;
     } else {
       return devStatus;

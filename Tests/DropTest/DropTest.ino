@@ -9,8 +9,8 @@
 #define RECOVERY_THRESH 1
 
 Buzzer buzzer(10);
-Bmp280 bmp;
-//Mpu6050 mpu;
+//Bmp280 bmp;
+Mpu6050 mpu;
 
 
 const byte ROWS = 4; //four rows
@@ -47,19 +47,19 @@ void setup(){
   while(!Serial);
   Serial.println("Serial monitor ready !");
   state = Idle;
-  /*
+  
   if(mpu.begin() != 0){
     Serial.println("Couldn't init MPU");
   }
-  */
+  
   Serial.println("Setup done !");
-  buzzer.initStart();
+  //buzzer.initStart();
   setupEndTime = millis();
 }
 
 void loop(){
-  //mpu.measure();
-  //mpu.printQuat();
+  mpu.measure();
+  mpu.printQuat();
 
   /*
   char customKey = customKeypad.getKey();
@@ -67,7 +67,8 @@ void loop(){
     apogeeOverride = true;
   }
   */
-  
+
+  /*
   currTime = millis() - setupEndTime;
   switch(state){
     case Idle:
@@ -158,5 +159,5 @@ void loop(){
       flightDone = true;
       state = Idle;
   }
-  
+  */
 }
