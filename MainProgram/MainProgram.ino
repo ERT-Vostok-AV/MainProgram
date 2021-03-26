@@ -22,7 +22,7 @@ Tasks :
 
 //Pinout
 #define BATTERY_PIN A7
-#define BUZZER_PIN 9
+#define BUZZER_PIN A9
 
 enum States{
   Idle, Init, PrefTrans, Ascending, Descending, PostFTrans, Beacon
@@ -134,6 +134,7 @@ void loop() {
 
       state = PrefTrans;
       buzzer.initSuccess();
+      Serial.println("Preftrans");
       break;
 
     case PrefTrans: // 50Hz Log 

@@ -48,7 +48,16 @@ int Mpu6050::begin(){
     if(devStatus == 0){
       mpuC.CalibrateAccel(6);
       mpuC.CalibrateGyro(6);
-      
+      mpuC.PrintActiveOffsets();
+      /*
+      mpuC.setXAccelOffset(-2538);
+      mpuC.setYAccelOffset(-3307);
+      mpuC.setZAccelOffset(3064);
+
+      mpuC.setXGyroOffset(-68);
+      mpuC.setYGyroOffset(21);
+      mpuC.setZGyroOffset(9);
+      */
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
@@ -83,16 +92,16 @@ void Mpu6050::measure(){
 }
 
 void Mpu6050::quatToAngle(){
-  float angle = acos(quat[0]) * 2;
-  float dividend = sqrt(1 - (quat[0] * quat[0]));
+  float angle = acos(q.w) * 2;
+  float dividend = sqrt(1 - (q.w * q.w));
   if(dividend < 0.001){ // to avoid division by 0
     angles[1] = 1;
     angles[2] = 0;
     angles[3] = 0;
   } else {
-    angles[1] = quat[1] / dividend;
-    angles[2] = quat[2] / dividend;
-    angles[3] = quat[3] / dividend;
+    angles[1] = q.x / dividend;
+    angles[2] = q.y / dividend;
+    angles[3] = q.z / dividend;
   }
   angles[0] = angle;
 }

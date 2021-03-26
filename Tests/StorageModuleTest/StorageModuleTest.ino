@@ -15,6 +15,8 @@ Buffer buffer(bufferStorageArray);
 
 FlightData measures;
 
+int curr = 0;
+
 int n = 10; //number of data in the dummy buffer
 
 void setup () {
@@ -25,6 +27,7 @@ void setup () {
   Serial.println("Initializing SD card...");
   sdcard.begin();
   Serial.println("initialization done. Creating dummy buffer...");
+  sdcard.initLog();
 
   for (int i = 0; i < n; i++)
   {
@@ -41,16 +44,24 @@ void setup () {
   }
 
   Serial.println("Saving it on SD card");
-  sdcard.initLog();
 
-  long duration = micros();
-  sdcard.saveSD(buffer);
-  duration = micros() - duration;
-  sdcard.logFlightInfo(0,1,2,3);
-  Serial.println("Saving finished !");
-  Serial.print("It took "); Serial.print(duration); Serial.print("µs to save "); Serial.print(n); Serial.println(" measures");
+//  long duration = micros();
+//  sdcard.saveSD(buffer);
+//  duration = micros() - duration;
+//  sdcard.logFlightInfo(0,1,2,3);
+//  Serial.println("Saving finished !");
+//  Serial.print("It took "); Serial.print(duration); Serial.print("µs to save "); Serial.print(n); Serial.println(" measures");
+  curr = millis();
 }
 
+
 void loop() {
-  
+  sdcard.saveSD(buffer);
+  curr = millis();
+  if(curr > 10000){
+    sdcard.logFlightInfo(0,0,0,0);
+    Serial.println("FINI");
+    while(1);
+  } 
+  delay(10);
 }
