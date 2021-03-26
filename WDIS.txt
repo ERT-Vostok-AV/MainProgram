@@ -1,6 +1,21 @@
-26.03 : 
+--------------- CEST QUOI ? ---------------
+Log des choses à faire et remarques d'implémentations importante à réfléchir pour la suite. Histoire de 
+se rappler ou on en était la derniere fois quon a bosser sur le projet.
+
+
+--------------- FORMAT ---------------
+NOM  jour.mois: 
+	- nom module : quelque phrase pour ride ce qui a été fait et à faire et des petites remarques
+	- ...
+
+/!\ NEFFACER RIEN QUE VOUS AVEZ PAS VOUS MEME ECRIT /!\
+
+--------------- DEBUT ---------------
+
+THEO 26.03:
 	- Storage : done ? ouvre et ferme le fichier à chaque fois
-	- MPU : écrire le code pour la vitesse. Gyro: soit utiliser la calib auto ou hardcode, a priori les deux marches pareils 
+	- MPU : écrire le code pour la vitesse. Gyro: soit utiliser la calib auto ou hardcode, a priori les
+		deux marches pareils 
 	- BMP : done ?
 	- eventman : tester !!
 	- batIndic : hardcode les valeurs des resistances et voir si ça marche
