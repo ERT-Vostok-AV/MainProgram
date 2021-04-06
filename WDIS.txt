@@ -20,4 +20,7 @@ THEO 26.03:
 	- eventman : tester !!
 	- batIndic : hardcode les valeurs des resistances et voir si ça marche
 	- buzzer : done ? Eventuellement changer un peu les sons pour faire un truc plus beau ?
-	- radio : faudrait commencer... 
+	- radio : faudrait commencer...
+
+GASTON 06.04:
+	- Eventman : faudrait recheck les condition pour le touchdown => velZ donnée sûre ? pas plutot norme de la vitesse ?

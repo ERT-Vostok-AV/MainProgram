@@ -7,7 +7,7 @@ const double LIFTOFFSPEED = 2;				// Vitesse minimum pour le d�tection du d�
 const double APOGEESPEEDCHANGE = -1;		// Id�e c'est d'�tre s�r que la vitesse horizontale est bien n�gatif, et donc que l'apog�e est pass�
 const double APOGEEDIFFERENCEALTITUDE = 3;	// En gros on va comparer maxAlt et l'altitude actuel, si la diff�rence est plus grande que cette valeur alors il detecte que la fus�e redescend.  
 const double TRIGGERFOREMATCHALTITUDE = 300;//
-const double TOUCHDOWNMAXALTITUDE = 20;		// Si il n'est pas d�scendu en dessous de cette altitude il ne peut pas d�clarer Touuchdown (retourner true)
+const double TOUCHDOWNMAXALTITUDE = 20;		// Si il n'est pas d�scendu en dessous de cette altitude il ne peut pas d�clarer Touchdown (retourner true)
 const double TOUCHDOWNMAXSPEED = 1/2;	
 const double TOUCHDOWNMINSPEED = -1/2;		// Si la vitesse verticale n'est pas comprise entre ces deux valeurs il ne peut pas d�clarer le Touchdown (retourner true)
 
