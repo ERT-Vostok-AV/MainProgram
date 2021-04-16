@@ -21,7 +21,7 @@ Tasks :
 #define BUFFER_ELEMENT_COUNT_MAX 100
 
 //Pinout
-#define BATTERY_PIN A7
+#define BATTERY_PIN A0
 #define BUZZER_PIN A9
 
 enum States{
