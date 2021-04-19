@@ -46,7 +46,7 @@ bool Storage::initLog(){
 }
 
 bool Storage::saveSD(const Buffer& buffer){
-  Serial.println("imhere");
+  //Serial.println("imhere");
     if (dataFile) {
       for (unsigned i = 0; i < buffer.size(); i++) {
         dataFile.print(String(buffer[i].batteryLevel)); dataFile.print(separator);
@@ -69,5 +69,10 @@ bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime,
   dataFile.print("Apogee time : "); dataFile.println(apogeeTime);
   dataFile.print("Recovery trigger time : "); dataFile.println(reTriggerTime);
   dataFile.print("Touchdown time : "); dataFile.println(touchdownTime);
+  dataFile.close();
+}
+
+void Storage::test(){
+  dataFile = SD.open("data.txt", FILE_WRITE);
   dataFile.close();
 }

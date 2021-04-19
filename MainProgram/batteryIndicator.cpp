@@ -8,11 +8,15 @@
  * 
  */
 
-BatteryIndicator::BatteryIndicator(int pinC) : Sensor(0x00){pin = pinC;}
+BatteryIndicator::BatteryIndicator(int pinC) : Sensor(0x00){
+  pin = pinC; 
+  maxV = 12 * (r1 / (r1 + r2));
+  maxBin = (1024 / 3.3) * maxV;
+}
 
 
 void BatteryIndicator::measure() {
-  batteryLevel = (100 / 921.5) * analogRead(pin);
+  batteryLevel = (100 / maxBin) * analogRead(pin);
 }
 
 int BatteryIndicator::begin(){

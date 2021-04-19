@@ -1,0 +1,26 @@
+--------------- CEST QUOI ? ---------------
+Log des choses à faire et remarques d'implémentations importantes à réfléchir pour la suite. Histoire de 
+se rappler où on en était la derniere fois qu'on a bossé sur le projet.
+
+
+--------------- FORMAT ---------------
+NOM  jour.mois: 
+	- nom module : quelque phrase pour ride ce qui a été fait et à faire et des petites remarques
+	- ...
+
+/!\ N'EFFACEZ RIEN QUE VOUS AVEZ PAS VOUS MEME ECRIT /!\
+
+--------------- DEBUT ---------------
+
+THEO 26.03:
+	- Storage : done ? ouvre et ferme le fichier à chaque fois
+	- MPU : écrire le code pour la vitesse. Gyro: soit utiliser la calib auto ou hardcode, a priori les
+		deux marches pareils 
+	- BMP : done ?
+	- eventman : tester !!
+	- batIndic : hardcode les valeurs des resistances et voir si ça marche
+	- buzzer : done ? Eventuellement changer un peu les sons pour faire un truc plus beau ?
+	- radio : faudrait commencer...
+
+GASTON 06.04:
+	- Eventman : faudrait recheck les condition pour le touchdown => velZ donnée sûre ? pas plutot norme de la vitesse ?

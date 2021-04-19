@@ -80,20 +80,21 @@ void Mpu6050::measure(){
     quat[3] = (fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f;
     for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
 
-    //q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
+    q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
+    quatToAngle();
 }
 
 void Mpu6050::quatToAngle(){
-  float angle = acos(quat[0]) * 2;
-  float dividend = sqrt(1 - (quat[0] * quat[0]));
+  float angle = acos(q.w) * 2;
+  float dividend = sqrt(1 - (q.w * q.w));
   if(dividend < 0.001){ // to avoid division by 0
     angles[1] = 1;
     angles[2] = 0;
     angles[3] = 0;
   } else {
-    angles[1] = quat[1] / dividend;
-    angles[2] = quat[2] / dividend;
-    angles[3] = quat[3] / dividend;
+    angles[1] = q.x / dividend;
+    angles[2] = q.y / dividend;
+    angles[3] = q.z / dividend;
   }
   angles[0] = angle;
 }
@@ -104,19 +105,12 @@ void Mpu6050::printQuat(){
   Serial.print(angles[1] ); Serial.print(" ");
   Serial.print(angles[2] ); Serial.print(" ");
   Serial.print(angles[3] ); Serial.println();
-
-  /*
-  Serial.print((fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f); Serial.print(" ");
-  Serial.print((fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f); Serial.print(" ");
-  Serial.print((fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f); Serial.print(" ");
-  Serial.print((fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f); Serial.println("");
-  */
 }
 
 //Getter for the velocity and orientation
-double Mpu6050::getRotX() {return degX;}
-double Mpu6050::getRotY() {return degY;}
-double Mpu6050::getRotZ() {return degZ;}
+double Mpu6050::getRotX() {return (angles[0] * angles[1]) * RAD_TO_DEG;}
+double Mpu6050::getRotY() {return (angles[0] * angles[2]) * RAD_TO_DEG;}
+double Mpu6050::getRotZ() {return (angles[0] * angles[3]) * RAD_TO_DEG;}
 
 double Mpu6050::getVelX() {return velX;}
 double Mpu6050::getVelY() {return velY;}

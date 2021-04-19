@@ -1,7 +1,7 @@
 #include "bmp280.h"
 #include "mpu6050.h"
 #include "buzzer.h"
-#include <Keypad.h>
+//#include <Keypad.h>
 
 
 #define LIFTOFF_THRESH 0.5
@@ -9,10 +9,10 @@
 #define RECOVERY_THRESH 1
 
 Buzzer buzzer(10);
-//Bmp280 bmp;
+Bmp280 bmp;
 Mpu6050 mpu;
 
-
+/*
 const byte ROWS = 4; //four rows
 const byte COLS = 4; //four columns
 //define the cymbols on the buttons of the keypads
@@ -27,7 +27,7 @@ byte colPins[COLS] = {2, 3, 4, 5}; //connect to the column pinouts of the keypad
 
 //initialize an instance of class NewKeypad
 //Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
-
+*/
 constexpr int radioInterval = 500; // = 2Hz
 unsigned long currTime, setupEndTime, radioTime, liftOffTime, apogeeTime, touchdownTime;
 unsigned long idleTimeout = 3000;
@@ -43,7 +43,7 @@ enum States{
 States state;
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial);
   Serial.println("Serial monitor ready !");
   state = Idle;
@@ -53,21 +53,20 @@ void setup(){
   }
   
   Serial.println("Setup done !");
-  //buzzer.initStart();
+  buzzer.initStart();
   setupEndTime = millis();
 }
 
 void loop(){
   mpu.measure();
   mpu.printQuat();
-
+  delay(10);
   /*
   char customKey = customKeypad.getKey();
   if(customKey == '0'){
     apogeeOverride = true;
   }
   */
-
   /*
   currTime = millis() - setupEndTime;
   switch(state){
@@ -161,3 +160,4 @@ void loop(){
   }
   */
 }
+>>>>>>> d2550681e660800fd0101ef428082f925f6a982a

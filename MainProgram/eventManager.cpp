@@ -1,41 +1,38 @@
 #include "eventManager.h"
 
-
-
-const double LIFTOFFALTITUDE = 20;			// Altitude minimum pour détecter le décollage
-const double LIFTOFFSPEED = 2;				// Vitesse minimum pour le détection du décollage.
-const double APOGEESPEEDCHANGE = -1;		// Idée c'est d'être sûr que la vitesse horizontale est bien négatif, et donc que l'apogée est passé
-const double APOGEEDIFFERENCEALTITUDE = 3;	// En gros on va comparer maxAlt et l'altitude actuel, si la différence est plus grande que cette valeur alors il detecte que la fusée redescend.  
-const double TRIGGERFOREMATCHALTITUDE = 300;//
-const double TOUCHDOWNMAXALTITUDE = 20;		// Si il n'est pas déscendu en dessous de cette altitude il ne peut pas déclarer Touuchdown (retourner true)
-const double TOUCHDOWNMAXSPEED = 1/2;	
-const double TOUCHDOWNMINSPEED = -1/2;		// Si la vitesse verticale n'est pas comprise entre ces deux valeurs il ne peut pas déclarer le Touchdown (retourner true)
+const double LIFTOFF_ALTITUDE = 20;			// Altitude minimum pour detecter le decollage
+const double LIFTOFF_SPEED = 2;				// Vitesse minimum pour le detection du decollage.	// Idee c'est d'etre sur que la vitesse horizontale est bien nï¿½gatif, et donc que l'apogee est passe
+const double APOGEE_DETECTION_THRESHOLD = 3;	// En gros on va comparer maxAlt et l'altitude actuel, si la difference est plus grande que cette valeur alors il detecte que la fusï¿½e redescend.  
+const double RE_TRIGGER_ALTITUDE = 300;//
+const double TOUCHDOWN_MAX_ALTITUDE = 20;		// Si il n'est pas descendu en dessous de cette altitude il ne peut pas declarer Touuchdown (retourner true)
+const double TOUCHDOWN_MAX_SPEED = 1/2;	
 
 EventManager::EventManager() : triggered(false) {}
 
 bool EventManager::isLiftOff(double alt, double velZ){
-	bool data1 = alt > LIFTOFFALTITUDE;
-	bool data2 = velz > LIFTOFFSPEED;
-	return data1 or data2;	// à voir ce que l'on préfère
+	bool data1 = alt > LIFTOFF_ALTITUDE;
+	bool data2 = velZ > LIFTOFF_SPEED;
+	return data1 or data2;	// and ou or ?
 }
 
 bool EventManager::isApogee(double alt, double velZ){
 	if (alt > maxAlt){
-	maxAlt = alt;
+	  maxAlt = alt;
 	}
-	bool data1 = velZ < APOGEESPEEDCHANGE;					// détecte vitesse horizontale négative
-	bool data2 = (maxAlt-APOGEEDIFFERENCEALTITUDE) > alt;	// détecte altitude qui redescent
-	return data1 or data2;
+	bool data1 = velZ < 0;					// detecte vitesse horizontale negative
+	bool data2 = (maxAlt - alt) > APOGEE_DETECTION_THRESHOLD;	// detecte altitude qui redescent
+	return data1 and data2; // and ou or?
 	}
 
 bool EventManager::isReTrigger(double alt){
-	return alt <= TRIGGERFOREMATCHALTITUDE; //SOME RANDOM ALTITUDE NEED TO CHECK
+	return alt <= RE_TRIGGER_ALTITUDE; 
 }
 
 bool EventManager::isTouchDown(double alt, double velZ){
-	bool data1 = alt < TOUCHDOWNMAXALTITUDE;								// verifie que c'est après la descente
-	bool data2 = (velZ < TOUCHDOWNMAXSPEED) and (velz > TOUCHDOWNMINSPEED);
-																			// éventuellement une troisième condition altitude stagnant??
+	bool data1 = alt < RE_TRIGGER_ALTITUDE;								// verifie que c'est apres la descente
+	bool data2 = abs(velZ) < TOUCHDOWN_MAX_SPEED;
+  // Peut etre verifie si stagne (buffer ?)
+ 
 	return (data2 and data1);
 }
 
