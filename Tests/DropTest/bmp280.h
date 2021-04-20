@@ -2,10 +2,8 @@
 #define BMP280_H
 
 /*
-extends sensor
-A class that represents the bmp280 aboard the rocket
-
-*/
+ * Represents the BMP280 aboard the rocket
+ */
 
 #include "sensor.h"
 

@@ -1,10 +1,17 @@
 #include "buzzer.h"
 #include "Arduino.h"
 
+/*
+ * Constructor: initialize the battery pin as an output
+ */
 Buzzer::Buzzer(int pin) : pin(pin){
     pinMode(pin, OUTPUT);
   }
 
+/*
+ * Produce a beacon sound as 
+ * - - - . . . - - - (SOS)
+ */
 void Buzzer::beacon(){
     // S
     bip(1000, 200);
@@ -30,17 +37,22 @@ void Buzzer::beacon(){
     bip(1000, 200);
     delay(200);
     bip(1000, 200);
-    
-    
-    // bip bip bip biiiip biiiip biiiip bip bip bip (a.k.a SOS)
 }
 
+/*
+ * Produces an error sound as :
+ * Half a second high pitch note
+ */
 void Buzzer::error(){
     bip(3000, 500);
     // biiiip 
 }
 
-
+/*
+ * Produces a success sound after initialisation as :
+ * Two bips lasting a 10th of a second seperated by 
+ * a 10th of a seconds
+ */
 void Buzzer::initSuccess(){
     bip(2000, 100);
     delay(100);
