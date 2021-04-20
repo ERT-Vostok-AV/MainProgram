@@ -1,10 +1,9 @@
-
 #include "I2Cdev.h"
 #include "mpu6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 //#include "mpuC6050.h" // not necessary if using MotionApps include file
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    #include "Wire.h"
+#include "Wire.h"
 #endif
 #include "Arduino.h"
 
