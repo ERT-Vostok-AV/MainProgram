@@ -60,6 +60,10 @@ void Buzzer::initSuccess(){
     // bip bip
 }
 
+/*
+ * Prodcues a bip when the 2nd event has been triggered as:
+ * 3 bip of a 10th of a second separated by a 10th of a sec
+ */
 void Buzzer::reTrigger(){
     bip(2000, 100);
     delay(100);
@@ -68,17 +72,26 @@ void Buzzer::reTrigger(){
     bip(2000, 100);
 }
 
+/*
+ * Porduces a simple bip of a fifth of a second
+ */
 void Buzzer::initStart(){
     bip(2000, 200);
     // bip (boring)
 }
 
+/*
+ * Produces two bips of half a second 
+ */
 void Buzzer::liftoff(){
     bip(3000, 500);
     delay(300);
     bip(3000, 500);
 }
 
+/*
+ * Produces two long bips separated by a short one
+ */
 void Buzzer::apogee(){ // _ . _
     bip(3000, 500);
     delay(300);
@@ -87,6 +100,11 @@ void Buzzer::apogee(){ // _ . _
     bip(3000, 500);
 }
 
+/*
+ * Given a frequence and a duration, makes the buzzer bip
+ * @param freq : frequence of the bip
+ * @parm duration : duration of the bip
+ */
 void Buzzer::bip(int freq, int duration){
     noTone(pin);
     tone(pin, freq);

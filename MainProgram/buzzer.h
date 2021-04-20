@@ -10,6 +10,9 @@ public:
     void initStart();
     void initSuccess();
     void beacon();
+    void liftoff();
+    void apogee();
+    void reTrigger();
 private:
     int pin;
 
