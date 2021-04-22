@@ -2,8 +2,10 @@
 #define BMP280_H
 
 /*
- * Represents the BMP280 aboard the rocket
- */
+extends sensor
+A class that represents the bmp280 aboard the rocket
+
+*/
 
 #include "sensor.h"
 
@@ -12,7 +14,7 @@ class Bmp280 : public Sensor {
 public:
     Bmp280();
     
-    int begin();
+    bool begin();
 
     virtual void measure() override;
 

@@ -1,37 +1,45 @@
 #include "I2Cdev.h"
 #include "mpu6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
-//#include "mpuC6050.h" // not necessary if using MotionApps include file
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    #include "Wire.h"
+#include "Wire.h"
 #endif
 #include "Arduino.h"
 
-/**Error codes:
- * 0 no error
- * devStatus Check DMP documentation
- */
+#include <stdio.h>
 
-MPU6050 mpuC(0x68);
-uint8_t devStatus;
-uint16_t packetSize;
-uint16_t fifoCount;
-uint8_t fifoBuffer[64];
-Quaternion q;           // [w, x, y, z]         quaternion container
-VectorInt16 aa;         // [x, y, z]            accel sensor measurements
-VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
-VectorInt16 aaWorld;
-VectorFloat gravity; 
-float angles[4], euler[3]; 
-
+// Address of the MPU on the i2c bus
+#define SENSOR_ADDR 0x68
+// Radian to degree factor
 #define radToDeg 57.2958
+// Value of the scale for the accel
+#define PRECISION 2048.0f; //16384.0f
 
-Mpu6050::Mpu6050() : Sensor(0x68) {}
-double gXOff, gYOff, gZOff, aXOff, aYOff, aZOff;
-double currTimeM, prevTime, deltaTime;
-// Ratio to convert radians to degrees.
+// MPU object from the i2cdev lib
+MPU6050 mpuC(SENSOR_ADDR);
+// Size of a packet
+uint16_t packetSize;
+// Size of the fifo 
+uint16_t fifoCount;
+// Contains the value of the fifo
+uint8_t fifoBuffer[64];
+// Contains the orientation as a quaternion
+Quaternion q;   
+// Contains the gravity vector
+VectorFloat gravity;
+// Contains the veloctiy
+VectorInt16 vel; 
+// Contains the orientation as axis-anlge et euler representations
+float angles[4], euler[3]; 
+// Hold the values of the velocity and accel of x y and z
+float velX, velY, velZ, accX, accY, accZ;
+double currTimeM, prevTimeM, deltaTimeM;
 
+Mpu6050::Mpu6050() : Sensor(SENSOR_ADDR) {}
 
+/*
+ * Initializes the MPU sensor
+ */
 int Mpu6050::begin(){
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
       Wire.begin();
@@ -46,7 +54,7 @@ int Mpu6050::begin(){
     Serial.println(mpuC.testConnection() ? F("Success") : F("Failed"));
   
     Serial.println(F("Initializing DMP..."));
-    devStatus = mpuC.dmpInitialize();
+    uint8_t devStatus = mpuC.dmpInitialize();
   
     if(devStatus == 0){
       mpuC.CalibrateAccel(6);
@@ -55,36 +63,58 @@ int Mpu6050::begin(){
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
+      
+      mpuC.setFullScaleAccelRange(MPU6050_ACCEL_FS_16);
+      mpuC.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
+
+      currTimeM = millis();
       return devStatus;
     } else {
       return devStatus;
     }
 }
 
-// Get the most recent values and stores them.
+/*
+ * Reads the most recent values from the MPU and stores them 
+ */
 void Mpu6050::measure(){
 
+    // Empty the fifo
     mpuC.resetFIFO();
+
+    //Get the size of the fifo
     fifoCount = mpuC.getFIFOCount();
-  
+
+    // Wait for the fifo to fill until reached the size of a packet
     while(fifoCount < packetSize) fifoCount = mpuC.getFIFOCount();
-    
-    // Gatter the latest measures in the fifo
+
+    //Fills the fifo buffer according to the packet size
     mpuC.getFIFOBytes(fifoBuffer, packetSize);
+    mpuC.dmpGetQuaternion(&q, fifoBuffer);
 
-    
-    float quat[4];
-    quat[0] = (fifoBuffer[0] << 8 | fifoBuffer[1]) / 16384.0f;
-    quat[1] = (fifoBuffer[4] << 8 | fifoBuffer[5]) / 16384.0f;
-    quat[2] = (fifoBuffer[8] << 8 | fifoBuffer[9]) / 16384.0f;
-    quat[3] = (fifoBuffer[12] << 8 | fifoBuffer[13]) / 16384.0f;
-    for (int i = 0; i < 4; i++) if (quat[i] >= 2) quat[i] = -4 + quat[i];
+    // Manually fetching velocity values using I2C
+    Wire.beginTransmission(SENSOR_ADDR);
+    Wire.write(0x3B);
+    Wire.endTransmission(false);
+    Wire.requestFrom(SENSOR_ADDR, 6, true);
+    accX = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
+    accY = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
+    accZ = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
 
-    q.w = quat[0]; q.x = quat[1]; q.y = quat[2]; q.z = quat[3];
-    quatToAngle();
+    prevTimeM = currTimeM;
+    currTimeM = millis();
+    deltaTimeM = currTimeM - prevTimeM;
+    // Extract velocity from accel (basically integral)
+    velX = accX * deltaTimeM;
+    velY = accY * deltaTimeM;
+    velZ = accZ * deltaTimeM;
 }
 
-void Mpu6050::quatToAngle(){
+/*
+ * Convert from quaternion to axis angle
+ * @param res : the float table in which the result should be put into
+ */
+int Mpu6050::quatToAngle(float* res){
   float angle = acos(q.w) * 2;
   float dividend = sqrt(1 - (q.w * q.w));
   if(dividend < 0.001){ // to avoid division by 0
@@ -99,18 +129,24 @@ void Mpu6050::quatToAngle(){
   angles[0] = angle;
 }
 
+/*
+ * STUB 
+ */
 void Mpu6050::printQuat(){
-  quatToAngle();
+  quatToAngle(angles);  
+  //Serial.printf("%u\n",mpuC.getFullScaleAccelRange());
+
   Serial.print(angles[0] ); Serial.print(" ");
   Serial.print(angles[1] ); Serial.print(" ");
   Serial.print(angles[2] ); Serial.print(" ");
   Serial.print(angles[3] ); Serial.println();
+
 }
 
 //Getter for the velocity and orientation
-double Mpu6050::getRotX() {return (angles[0] * angles[1]) * RAD_TO_DEG;}
-double Mpu6050::getRotY() {return (angles[0] * angles[2]) * RAD_TO_DEG;}
-double Mpu6050::getRotZ() {return (angles[0] * angles[3]) * RAD_TO_DEG;}
+double Mpu6050::getRotX() {return (angles[0] * -angles[1]);}
+double Mpu6050::getRotY() {return (angles[0] * angles[3]);}
+double Mpu6050::getRotZ() {return (angles[0] * angles[2]);}
 
 double Mpu6050::getVelX() {return velX;}
 double Mpu6050::getVelY() {return velY;}

@@ -14,23 +14,19 @@ class Mpu6050 : public Sensor {
 public:
     Mpu6050();
 
-    int begin();
-
-    void printQuat();
+    bool begin();
+    
     double getRotX();
     double getRotY();
     double getRotZ();
     double getVelX();
     double getVelY();
     double getVelZ();
-
-    void getAngle(float* res);
     
     virtual void measure() override;
     
 private:
-
-    int quatToAngle(float* res);
+    void getOffsets();
     // 16 bit askip et en [m/s]
     double velX, velY, velZ; //velocity
     double degX, degY, degZ; //rotation
