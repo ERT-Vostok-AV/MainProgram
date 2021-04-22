@@ -1,23 +1,31 @@
 #include "buzzer.h"
 
-const int buzPin = 14;
-const int EMPin = 15;
-const int burnTime = 200;
+const int buzPin = 23;  // A9
+const int EMPin = 22;   // A8
+const int burnTime = 500;
 
-Buzzer buzzEclair(buzPin);
+int lastTime, currTime, cnt = 0;
+
+Buzzer buzz(buzPin);
 
 void setup() {
-    pinMode(EMPin, OUTPUT);
-
-    buzzEclair.error();
-    delay(5000); //wait 5 sec before sending a current
-    
-    buzzEclair.initStart();
-    digitalWrite(EMPin, HIGH);
-    delay(burnTime);
-    digitalWrite(EMPin, LOW);
+  pinMode(EMPin, OUTPUT);
 }
 
 void loop() {
-    delay(1000);
+  if(millis()-lastTime >= 1000){
+    cnt += 1;
+    if(cnt >= 10){
+      buzz.initSuccess();
+      digitalWrite(EMPin, HIGH);
+      delay(burnTime);
+      digitalWrite(EMPin, LOW);
+      delay(500);
+      buzz.initStart();
+      while(1);
+    } else {
+      buzz.error();
+      lastTime = millis();
+    }
+  }
 }
