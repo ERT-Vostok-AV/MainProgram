@@ -24,3 +24,8 @@ THEO 26.03:
 
 GASTON 06.04:
 	- Eventman : faudrait recheck les condition pour le touchdown => velZ donnée sûre ? pas plutot norme de la vitesse ?
+
+GASTON 26.04:
+	- MainProg : On a plus besoin de la fifo en fait donc on peut la virer => gagne du process time
+	- MPU : Nettoyer
+	- Finir 100% la récup des données + teste de la FSM
