@@ -28,7 +28,7 @@ Quaternion q;
 // Contains the gravity vector
 VectorFloat gravity;
 // Contains the veloctiy
-VectorInt16 vel; 
+VectorInt16 vel;
 // Contains the orientation as axis-anlge et euler representations
 float angles[4], euler[3]; 
 // Hold the values of the velocity and accel of x y and z
@@ -144,6 +144,7 @@ void Mpu6050::printQuat(){
 }
 
 //Getter for the velocity and orientation
+double Mpu6050::getRotA() {return (angles[0]);} //A FAIRE AVEC THEO JSP COMMENT CA MARCHE
 double Mpu6050::getRotX() {return (angles[0] * -angles[1]);}
 double Mpu6050::getRotY() {return (angles[0] * angles[3]);}
 double Mpu6050::getRotZ() {return (angles[0] * angles[2]);}

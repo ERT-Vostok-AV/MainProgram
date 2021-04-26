@@ -17,6 +17,7 @@ public:
     int begin();
 
     void printQuat();
+    double getRotA();
     double getRotX();
     double getRotY();
     double getRotZ();
@@ -29,11 +30,11 @@ public:
     virtual void measure() override;
     
 private:
-
     int quatToAngle(float* res);
-    // 16 bit askip et en [m/s]
+    // 16 bit et en [m/s]
     double velX, velY, velZ; //velocity
-    double degX, degY, degZ; //rotation
+
+    double rotA, rotX, rotY, rotZ; //rotation
 };
 
 #endif // MPU6050_H

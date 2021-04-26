@@ -1,10 +1,18 @@
 #include "eventManager.h"
 
-const double LIFTOFF_ALTITUDE = 20;			// Altitude minimum pour detecter le decollage
-const double LIFTOFF_SPEED = 2;				// Vitesse minimum pour le detection du decollage.	// Idee c'est d'etre sur que la vitesse horizontale est bien n�gatif, et donc que l'apogee est passe
-const double APOGEE_DETECTION_THRESHOLD = 3;	// En gros on va comparer maxAlt et l'altitude actuel, si la difference est plus grande que cette valeur alors il detecte que la fus�e redescend.  
-const double RE_TRIGGER_ALTITUDE = 300;//
-const double TOUCHDOWN_MAX_ALTITUDE = 20;		// Si il n'est pas descendu en dessous de cette altitude il ne peut pas declarer Touuchdown (retourner true)
+/* Unites pour les constantes:
+	- Altitude : m
+	- Vitesse : m/s
+*/
+
+const double LIFTOFF_ALTITUDE = 10;			// Altitude minimum pour detecter le decollage
+const double LIFTOFF_SPEED = 10;		// Vitesse minimum pour le detection du decollage
+
+// Idee c'est d'etre sur que la vitesse verticale est bien negatif, et donc que l'apogee est passe
+// En gros on va comparer maxAlt et l'altitude actuel, si la difference est plus grande que cette valeur alors il detecte que la fusee redescend.
+const double APOGEE_DETECTION_THRESHOLD = 3;	  
+const double RE_TRIGGER_ALTITUDE = 300;
+const double TOUCHDOWN_MAX_ALTITUDE = 20;		// Si il n'est pas descendu en dessous de cette altitude il ne peut pas declarer Touchdown (retourner true)
 const double TOUCHDOWN_MAX_SPEED = 1/2;	
 
 EventManager::EventManager() : triggered(false) {}
@@ -19,7 +27,7 @@ bool EventManager::isApogee(double alt, double velZ){
 	if (alt > maxAlt){
 	  maxAlt = alt;
 	}
-	bool data1 = velZ < 0;					// detecte vitesse horizontale negative
+	bool data1 = velZ < 0;					// detecte vitesse verticale negative
 	bool data2 = (maxAlt - alt) > APOGEE_DETECTION_THRESHOLD;	// detecte altitude qui redescent
 	return data1 and data2; // and ou or?
 	}
