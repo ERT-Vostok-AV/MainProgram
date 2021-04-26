@@ -1,7 +1,7 @@
 #if !defined(PACKET_SR_H)
 #define PACKET_SR_H
 
-#include <stdint.h>
+//#include <stdint.h>
 
 #define PAYLOAD_SIZE 35
 
