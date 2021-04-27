@@ -7,7 +7,6 @@ Tasks :
 */
 
 #include <Vector.h>
-#include <QueueList.h> //https://playground.arduino.cc/Code/QueueList/ 
 
 #include "flightData.h"
 #include "bmp280.h"
@@ -43,8 +42,6 @@ FlightData bufferStorageArray[BUFFER_ELEMENT_COUNT_MAX];
 
 Buffer buffer(bufferStorageArray);
 
-// FIFO list for event detection
-QueueList<FlightData> fifo;
 
 
 Bmp280 bmp;
@@ -76,8 +73,6 @@ constexpr int apogeeTimeout = 20000; // 20 seconds
 void getMeasures();
 void logBuffer();
 void radioTranssmission();
-
-void clearFifo(QueueList<FlightData>& fifo);
 
 
 
@@ -161,7 +156,6 @@ void loop() {
         radioTransmission();
 
         if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().velocity[3])){  
-          clearFifo(fifo);
           liftOffTime = currTime;
           state = Ascending;
           break;
@@ -190,7 +184,6 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isApogee(buffer.back().altitude, buffer.back().velocity[3])){
-          clearFifo(fifo);
           apogeeTime = currTime;
           state = Descending;
           break;
@@ -225,7 +218,6 @@ void loop() {
         radioTransmission();
     
         if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().velocity[3])){
-          clearFifo(fifo);
           touchdownTime = currTime;
           state = PostFTrans;
           break;
@@ -287,11 +279,6 @@ void getMeasures() {
   measures.rotation[3] = mpu.getRotZ();
 
   buffer.push_back(measures);
-
-  while (fifo.count() >= radioInterval / measureInterval) {
-    fifo.pop();
-  }
-  fifo.push(measures);
 }
 
 void logBuffer() {
@@ -303,11 +290,5 @@ void radioTransmission(){
   if (!radio.packSend(buffer.back())){ // Send most recent data sample
     buzzer.error();
     // Error sending or packing shit
-  }
-}
-
-void clearFifo(QueueList<FlightData>& fifo) {
-  while (!fifo.isEmpty()) {
-    fifo.pop();
   }
 }
