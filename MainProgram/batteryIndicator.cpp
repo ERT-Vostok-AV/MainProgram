@@ -8,15 +8,9 @@
  * 
  */
 
-BatteryIndicator::BatteryIndicator(int pinC) : Sensor(0x00){
-  pin = pinC; 
-  maxV = 12 * (r1 / (r1 + r2));
+BatteryIndicator::BatteryIndicator(int pin) : Sensor(0x00), pin(pin){
+  maxV = batteryMaxV * (r1 / (r1 + r2));
   maxBin = (1024 / 3.3) * maxV;
-}
-
-
-void BatteryIndicator::measure() {
-  batteryLevel = (100 / maxBin) * analogRead(pin);
 }
 
 int BatteryIndicator::begin(){
@@ -26,6 +20,12 @@ int BatteryIndicator::begin(){
   }
   return 0;
 }
+
+
+void BatteryIndicator::measure() {
+  batteryLevel = (100 / maxBin) * analogRead(pin);
+}
+
 
 //accesseur
 double BatteryIndicator::getBatteryLevel() {

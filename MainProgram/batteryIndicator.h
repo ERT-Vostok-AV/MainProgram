@@ -11,7 +11,7 @@ A class that represents the battery indicator aboard the rocket
 
 class BatteryIndicator : public Sensor {
 public:
-    BatteryIndicator(int pinC);
+    BatteryIndicator(int pin);
 
     int begin();
 
@@ -27,6 +27,7 @@ private:
     double maxV, maxBin;
     double r1 = 80.3; // k Ohm
     double r2 = 325.8; // k Ohm
+    double batteryMaxV = 12; //V
 };
 
 
