@@ -6,9 +6,8 @@ struct FlightData {
     double altitude;
     double temperature;
 
-    //velX, velY, velZ
+    //x, y, z
     double velocity[3];
-    //rotA, rotX, rotY, rotZ
     double rotation[4];
 };
 

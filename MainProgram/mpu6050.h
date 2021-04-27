@@ -17,22 +17,24 @@ public:
     int begin();
 
     void printQuat();
+    double getRotA();
     double getRotX();
     double getRotY();
     double getRotZ();
     double getVelX();
     double getVelY();
     double getVelZ();
+
+    void getAngle(float* res);
     
     virtual void measure() override;
     
 private:
-
-    void quatToAngle();
-    // 16 bit askip et en [m/s]
-    uint8_t *teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
+    int quatToAngle(float* res);
+    // 16 bit et en [m/s]
     double velX, velY, velZ; //velocity
-    double degX, degY, degZ; //rotation
+
+    double rotA, rotX, rotY, rotZ; //rotation
 };
 
 #endif // MPU6050_H

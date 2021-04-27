@@ -11,7 +11,7 @@ enum Event {NO_EVENT, LIFTOFF, APOGEE, RE_TRIGGER, TOUCHDOWN};
 
 struct SRHeader
 {
-    int teamID;
+    Team teamID;
     int pktID;
 };
 

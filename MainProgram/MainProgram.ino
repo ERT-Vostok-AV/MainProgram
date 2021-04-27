@@ -21,7 +21,7 @@ Tasks :
 #define BUFFER_ELEMENT_COUNT_MAX 100
 
 //Pinout
-#define BATTERY_PIN A7
+#define BATTERY_PIN A0
 #define BUZZER_PIN A9
 
 enum States{
@@ -50,10 +50,10 @@ QueueList<FlightData> fifo;
 Bmp280 bmp;
 Mpu6050 mpu;
 BatteryIndicator battery(BATTERY_PIN);
+Buzzer buzzer(BUZZER_PIN);
 EventManager eventManager;
 Storage storage;
 RadioModule radio;
-Buzzer buzzer(BUZZER_PIN); // may be make it a variable
 
 
 //Variables used to control frequency of operations
@@ -63,7 +63,7 @@ int measureInterval;
 constexpr int radioInterval = 500; // = 2Hz
 constexpr int logInterval = 1000; // = 2Hz
 
-// Timeout if we get stuck in states before PostFTrans
+// Timeout if we get stuck in states before PostFTrans STILL USEFUL ?
 constexpr int flightTimeout = 240000; // = 4 minutes (Check cette valeur) .
 // Timeout between PoR and initialization
 constexpr int idleTimeout = 5000;
@@ -72,12 +72,14 @@ constexpr int postFTransTimeout = 60000; // 60 seconds
 // Timeout to apogee from liftOff
 constexpr int apogeeTimeout = 20000; // 20 seconds
 
-
+//protoype defs
 void getMeasures();
 void logBuffer();
 void radioTranssmission();
 
 void clearFifo(QueueList<FlightData>& fifo);
+
+
 
 void setup() {
   Serial.begin(9600);
@@ -90,6 +92,7 @@ void setup() {
   Serial.println("Setup done !");
   setupEndTime = millis();
 }
+
 
 void loop() {
   currTime = millis() - setupEndTime;
@@ -157,7 +160,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
 
-        if(eventManager.isLiftOff(buffer.back().altitude , buffer.back().velocity[3])){  
+        if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().velocity[3])){  
           clearFifo(fifo);
           liftOffTime = currTime;
           state = Ascending;
@@ -186,7 +189,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
     
-        if(eventManager.isApogee(buffer.back().altitude , buffer.back().velocity[3])){
+        if(eventManager.isApogee(buffer.back().altitude, buffer.back().velocity[3])){
           clearFifo(fifo);
           apogeeTime = currTime;
           state = Descending;
@@ -221,7 +224,7 @@ void loop() {
         radioTime += radioInterval;
         radioTransmission();
     
-        if(eventManager.isTouchDown(buffer.back().altitude,buffer.back().velocity[3])){
+        if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().velocity[3])){
           clearFifo(fifo);
           touchdownTime = currTime;
           state = PostFTrans;
@@ -278,9 +281,10 @@ void getMeasures() {
   measures.velocity[0] = mpu.getVelX();
   measures.velocity[1] = mpu.getVelY();
   measures.velocity[2] = mpu.getVelZ();
-  measures.rotation[0] = mpu.getRotX();
-  measures.rotation[1] = mpu.getRotY();
-  measures.rotation[2] = mpu.getRotZ();
+  measures.rotation[0] = mpu.getRotA();
+  measures.rotation[1] = mpu.getRotX();
+  measures.rotation[2] = mpu.getRotY();
+  measures.rotation[3] = mpu.getRotZ();
 
   buffer.push_back(measures);
 
