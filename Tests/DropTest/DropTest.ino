@@ -59,9 +59,9 @@ void setup(){
 
 void loop(){
   mpu.measure();
-  //mpu.printQuat();
-  delay(10);
-  Serial.printf("%2.1lf\t%2.1lf\t%2.1lf\n", mpu.getVelX(), mpu.getVelY(), mpu.getVelZ());
+  mpu.printQuat();
+  delay(20);
+  //Serial.printf("%2.1lf\t%2.1lf\t%2.1lf\n", mpu.getVelX(), mpu.getVelY(), mpu.getVelZ());
   /*
   char customKey = customKeypad.getKey();
   if(customKey == '0'){

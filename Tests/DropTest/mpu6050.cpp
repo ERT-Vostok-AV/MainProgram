@@ -57,15 +57,30 @@ int Mpu6050::begin(){
     uint8_t devStatus = mpuC.dmpInitialize();
   
     if(devStatus == 0){
+      mpuC.setXAccelOffset(-2620);
+      mpuC.setYAccelOffset(-1387);
+      mpuC.setZAccelOffset(1262);
+      mpuC.setXGyroOffset(-82);
+      mpuC.setXGyroOffset(23);
+      mpuC.setXGyroOffset(13);
+      /*
       mpuC.CalibrateAccel(6);
       mpuC.CalibrateGyro(6);
       
+      Serial.println(mpuC.getXAccelOffset());
+      Serial.println(mpuC.getYAccelOffset());
+      Serial.println(mpuC.getZAccelOffset());
+
+      Serial.println(mpuC.getXGyroOffset());
+      Serial.println(mpuC.getYGyroOffset());
+      Serial.println(mpuC.getZGyroOffset());
+      */
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
       
-      mpuC.setFullScaleAccelRange(MPU6050_ACCEL_FS_16);
-      mpuC.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
+      //mpuC.setFullScaleAccelRange(MPU6050_ACCEL_FS_16);
+      //mpuC.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
 
       currTimeM = millis();
       return devStatus;
