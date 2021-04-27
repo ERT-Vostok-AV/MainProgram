@@ -11,7 +11,7 @@ int nSamples = 100; //nombre d'échantillons pour la calibration de pression
 double arrondiAltitude;
 
 
-Bmp280::Bmp280() : Sensor(0x77) {}
+Bmp280::Bmp280() : Sensor(0x76) {}
 
 int Bmp280::begin() {
     //initialisation et calibration
