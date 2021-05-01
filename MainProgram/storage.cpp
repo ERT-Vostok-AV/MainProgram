@@ -14,13 +14,14 @@ int Storage::begin() {
       dataFile.println("--------------- VOSTOK FLIGHT DATA ---------------");
 
       //data structure :
-      //batteryLevel ; altitude ; temperature ; velX ; velY ; velZ ; rotX ; rotY ; rotZ
+      //batteryLevel ; altitude ; temperature ; velX ; velY ; velZ ; rotA ; rotX ; rotY ; rotZ
       dataFile.print("battery"); dataFile.print(separator);
       dataFile.print("alt"); dataFile.print(separator);
       dataFile.print("temp"); dataFile.print(separator);
       dataFile.print("velX"); dataFile.print(separator);
       dataFile.print("velY"); dataFile.print(separator);
       dataFile.print("velZ"); dataFile.print(separator);
+      dataFile.print("rotA"); dataFile.print(separator);
       dataFile.print("rotX"); dataFile.print(separator);
       dataFile.print("rotY"); dataFile.print(separator);
       dataFile.println("rotZ");
@@ -45,7 +46,8 @@ bool Storage::saveSD(const Buffer& buffer){
       dataFile.print(String(buffer[i].velocity[2])); dataFile.print(separator);
       dataFile.print(String(buffer[i].rotation[0])); dataFile.print(separator);
       dataFile.print(String(buffer[i].rotation[1])); dataFile.print(separator);
-      dataFile.println(String(buffer[i].rotation[2]));
+      dataFile.print(String(buffer[i].rotation[2])); dataFile.print(separator);
+      dataFile.println(String(buffer[i].rotation[3]));
     }
     dataFile.close();
   }

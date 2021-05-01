@@ -2,7 +2,6 @@
 #if !defined(EVENT_MANAGER_H)
 #define EVENT_MANAGER_H
 
-#include <QueueList.h>
 #include <Vector.h>
 
 #include "flightData.h"
