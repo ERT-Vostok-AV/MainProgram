@@ -20,7 +20,7 @@ void packData(const SRHeader& header, const Event& event, const UData& uData, Pa
 
     
     for (int i = 3; i >= 0; --i) {
-        dest[6 + (4-i)] = ( *((int*) (&uData.rotA)) >> 8*i) & 0xFF; //on regarde les bits a l addresse du float et on les interprete comme un int
+        dest[6 + (4-i)] = ( *((int*) (&uData.rotA)) >> 8*i) & 0xFF; //on regarde les bits a l'addresse du float et on les interprete comme un int
         dest[10 + (4-i)] = ( *((int*) (&uData.rotX)) >> 8*i) & 0xFF;
         dest[14 + (4-i)] = ( *((int*) (&uData.rotY)) >> 8*i) & 0xFF;
         dest[18 + (4-i)] = ( *((int*) (&uData.rotZ)) >> 8*i) & 0xFF;
