@@ -21,18 +21,17 @@ public:
     double getRotX();
     double getRotY();
     double getRotZ();
-    double getVelX();
-    double getVelY();
-    double getVelZ();
+    double getAccelX();
+    double getAccelY();
+    double getAccelZ();
 
     void getAngle(float* res);
     
     virtual void measure() override;
     
 private:
-    int quatToAngle(float* res);
     // 16 bit et en [m/s]
-    double velX, velY, velZ; //velocity
+    double accelX, accelY, accelZ; //acceleration
 
     double rotA, rotX, rotY, rotZ; //rotation
 };

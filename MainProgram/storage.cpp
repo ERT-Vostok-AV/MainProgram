@@ -41,9 +41,9 @@ bool Storage::saveSD(const Buffer& buffer){
       dataFile.print(String(buffer[i].batteryLevel)); dataFile.print(separator);
       dataFile.print(String(buffer[i].altitude)); dataFile.print(separator);
       dataFile.print(String(buffer[i].temperature)); dataFile.print(separator);
-      dataFile.print(String(buffer[i].velocity[0])); dataFile.print(separator);
-      dataFile.print(String(buffer[i].velocity[1])); dataFile.print(separator);
-      dataFile.print(String(buffer[i].velocity[2])); dataFile.print(separator);
+      dataFile.print(String(buffer[i].acceleration[0])); dataFile.print(separator);
+      dataFile.print(String(buffer[i].acceleration[1])); dataFile.print(separator);
+      dataFile.print(String(buffer[i].acceleration[2])); dataFile.print(separator);
       dataFile.print(String(buffer[i].rotation[0])); dataFile.print(separator);
       dataFile.print(String(buffer[i].rotation[1])); dataFile.print(separator);
       dataFile.print(String(buffer[i].rotation[2])); dataFile.print(separator);

@@ -16,11 +16,12 @@ Tasks :
 #include "storage.h"
 #include "radioModule.h"
 #include "buzzer.h"
+#include "packetSR.h"
 
-#define BUFFER_ELEMENT_COUNT_MAX 100
+#define BUFFER_ELEMENT_COUNT_MAX 120
 
 //Pinout
-#define BATTERY_PIN A0
+#define BATTERY_PIN 14
 #define BUZZER_PIN A9
 
 enum States{
@@ -68,11 +69,13 @@ constexpr int idleTimeout = 5000;
 constexpr int postFTransTimeout = 60000; // 60 seconds
 // Timeout to apogee from liftOff
 constexpr int apogeeTimeout = 20000; // 20 seconds
+// Bool to keep track if we sent the re trigger event
+bool sentTriggerEvent;
 
 //protoype defs
 void getMeasures();
 void logBuffer();
-void radioTranssmission();
+void radioTranssmission(Event event);
 
 
 
@@ -81,7 +84,8 @@ void setup() {
   while(!Serial);
   Serial.println("Serial monitor ready !");
 
-
+  sentTriggerEvent = false;
+  
   state = Idle;
   
   Serial.println("Setup done !");
@@ -144,22 +148,23 @@ void loop() {
         getMeasures();
       }
 
-      // 1Hz Data logging
-      if(currTime >= logTime + logInterval){
-        logTime += logInterval;
-        logBuffer();
-      }
-
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        radioTransmission();
 
-        if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().velocity[3])){  
+        if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().acceleration[3])){  
+          radioTransmission(LIFTOFF);
           liftOffTime = currTime;
           state = Ascending;
-          break;
+        } else {
+          radioTransmission(NO_EVENT);
         }
+      }
+
+            // 1Hz Data logging
+      if(currTime >= logTime + logInterval){
+        logTime += logInterval;
+        logBuffer();
       }
       break;
 
@@ -171,23 +176,24 @@ void loop() {
         measureTime += measureInterval;
         getMeasures();
       }
-
-      // 1Hz Data logging
-      if(currTime >= logTime + logInterval){
-        logTime += logInterval;
-        logBuffer();
-      }
       
       // 2Hz GS communication
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        radioTransmission();
     
-        if(eventManager.isApogee(buffer.back().altitude, buffer.back().velocity[3])){
+        if(eventManager.isApogee(buffer.back().altitude, buffer.back().acceleration[3])){
+          radioTransmission(APOGEE);
           apogeeTime = currTime;
           state = Descending;
-          break;
+        } else {
+          radioTransmission(NO_EVENT);
         }
+      }
+      
+      // 1Hz Data logging
+      if(currTime >= logTime + logInterval){
+        logTime += logInterval;
+        logBuffer();
       }
       break;
 
@@ -206,22 +212,28 @@ void loop() {
         }
       }
 
-      // 1Hz Data logging
-      if(currTime >= logTime + logInterval){
-        logTime += logInterval;
-        logBuffer();
-      }
+
       
       // 2Hz GS communication
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        radioTransmission();
-    
-        if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().velocity[3])){
+        
+        if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().acceleration[3])){
+          radioTransmission(TOUCHDOWN);
           touchdownTime = currTime;
           state = PostFTrans;
-          break;
+        } else if(eventManager.hasTriggered() && !sentTriggerEvent){
+          radioTransmission(RE_TRIGGER);
+           sentTriggerEvent = true;
+        } else{
+          radioTransmission(NO_EVENT);
         }
+      }
+      
+      // 1Hz Data logging
+      if(currTime >= logTime + logInterval){
+        logTime += logInterval;
+        logBuffer();
       }
       break;
 
@@ -234,22 +246,24 @@ void loop() {
         getMeasures();
       }
 
-      // 1Hz Data logging
-      if(currTime >= logTime + logInterval){
-        logTime += logInterval;
-        logBuffer();
-      }
+
 
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        radioTransmission();
+        radioTransmission(NO_EVENT);
       }
 
       // Timeout before beacon
       if(currTime >= (touchdownTime + postFTransTimeout)){
         storage.logFlightInfo(liftOffTime, apogeeTime, reTriggerTime, touchdownTime);
         state = Beacon;
+      }
+
+      // 1Hz Data logging
+      if(currTime >= logTime + logInterval){
+        logTime += logInterval;
+        logBuffer();
       }
       break;
 
@@ -270,9 +284,9 @@ void getMeasures() {
   measures.batteryLevel = battery.getBatteryLevel();
   measures.altitude = bmp.getAlt();
   measures.temperature = bmp.getTemp();
-  measures.velocity[0] = mpu.getVelX();
-  measures.velocity[1] = mpu.getVelY();
-  measures.velocity[2] = mpu.getVelZ();
+  measures.acceleration[0] = mpu.getAccelX();
+  measures.acceleration[1] = mpu.getAccelY();
+  measures.acceleration[2] = mpu.getAccelZ();
   measures.rotation[0] = mpu.getRotA();
   measures.rotation[1] = mpu.getRotX();
   measures.rotation[2] = mpu.getRotY();
@@ -286,8 +300,13 @@ void logBuffer() {
   buffer.clear();
 }
 
-void radioTransmission(){
-  if (!radio.packSend(buffer.back())){ // Send most recent data sample
+void radioTransmission(Event event){
+  Serial.print(measures.temperature); Serial.print(" ");
+  Serial.print(measures.altitude); Serial.print(" ");
+  Serial.print(measures.batteryLevel); Serial.print(" ");
+  mpu.printQuat();
+  Serial.println();
+  if (!radio.packSend(event, buffer.back())){ // Send most recent data sample
     buzzer.error();
     // Error sending or packing shit
   }

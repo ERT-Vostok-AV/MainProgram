@@ -2,7 +2,7 @@
 #include <Adafruit_BMP280.h>
 
 // Address of the sensor on the I2C bus
-#define SENSOR_ADDR 0x76
+#define SENSOR_ADDR 0x77
 // Number of samples used for the mean of the initial pressure function
 #define N_SAMPLES 100
 // BMP object from adafruit library

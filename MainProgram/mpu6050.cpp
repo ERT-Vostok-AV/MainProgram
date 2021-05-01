@@ -2,6 +2,7 @@
 #include "mpu6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+
 #include "Wire.h"
 #endif
 #include "Arduino.h"
@@ -31,9 +32,6 @@ VectorFloat gravity;
 VectorInt16 vel;
 // Contains the orientation as axis-anlge et euler representations
 float angles[4], euler[3]; 
-// Hold the values of the velocity and accel of x y and z
-float velX, velY, velZ, accX, accY, accZ;
-double currTimeM, prevTimeM, deltaTimeM;
 
 Mpu6050::Mpu6050() : Sensor(SENSOR_ADDR) {}
 
@@ -63,11 +61,6 @@ int Mpu6050::begin(){
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
-      
-      mpuC.setFullScaleAccelRange(MPU6050_ACCEL_FS_16);
-      mpuC.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
-
-      currTimeM = millis();
       return devStatus;
     } else {
       return devStatus;
@@ -92,29 +85,23 @@ void Mpu6050::measure(){
     mpuC.getFIFOBytes(fifoBuffer, packetSize);
     mpuC.dmpGetQuaternion(&q, fifoBuffer);
 
-    // Manually fetching velocity values using I2C
+    quatToAngle();
+
+    // Manually fetching acceleration values using I2C
     Wire.beginTransmission(SENSOR_ADDR);
     Wire.write(0x3B);
     Wire.endTransmission(false);
     Wire.requestFrom(SENSOR_ADDR, 6, true);
-    accX = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
-    accY = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
-    accZ = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
-
-    prevTimeM = currTimeM;
-    currTimeM = millis();
-    deltaTimeM = currTimeM - prevTimeM;
-    // Extract velocity from accel (basically integral)
-    velX = accX * deltaTimeM;
-    velY = accY * deltaTimeM;
-    velZ = accZ * deltaTimeM;
+    accelX = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
+    accelY = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
+    accelZ = (int16_t)(Wire.read() << 8| Wire.read()) / PRECISION;
 }
 
 /*
  * Convert from quaternion to axis angle
  * @param res : the float table in which the result should be put into
  */
-int Mpu6050::quatToAngle(float* res){
+int Mpu6050::quatToAngle(){
   float angle = acos(q.w) * 2;
   float dividend = sqrt(1 - (q.w * q.w));
   if(dividend < 0.001){ // to avoid division by 0
@@ -129,26 +116,12 @@ int Mpu6050::quatToAngle(float* res){
   angles[0] = angle;
 }
 
-/*
- * STUB 
- */
-void Mpu6050::printQuat(){
-  quatToAngle(angles);  
-  //Serial.printf("%u\n",mpuC.getFullScaleAccelRange());
+//Getter for the acceleration and orientation
+double Mpu6050::getRotA() {return angles[0];}
+double Mpu6050::getRotX() {return angles[1];}
+double Mpu6050::getRotY() {return angles[2];}
+double Mpu6050::getRotZ() {return angles[3];}
 
-  Serial.print(angles[0] ); Serial.print(" ");
-  Serial.print(angles[1] ); Serial.print(" ");
-  Serial.print(angles[2] ); Serial.print(" ");
-  Serial.print(angles[3] ); Serial.println();
-
-}
-
-//Getter for the velocity and orientation
-double Mpu6050::getRotA() {return (angles[0]);} //A FAIRE AVEC THEO JSP COMMENT CA MARCHE
-double Mpu6050::getRotX() {return (angles[0] * -angles[1]);}
-double Mpu6050::getRotY() {return (angles[0] * angles[3]);}
-double Mpu6050::getRotZ() {return (angles[0] * angles[2]);}
-
-double Mpu6050::getVelX() {return velX;}
-double Mpu6050::getVelY() {return velY;}
-double Mpu6050::getVelZ() {return velZ;}
+double Mpu6050::getAccelX() {return accelX;}
+double Mpu6050::getAccelY() {return accelY;}
+double Mpu6050::getAccelZ() {return accelZ;}
