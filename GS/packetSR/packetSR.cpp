@@ -24,9 +24,9 @@ void packData(const SRHeader& header, const Event& event, const UData& uData, Pa
         dest[10 + (4-i)] = ( *((int*) (&uData.rotX)) >> 8*i) & 0xFF;
         dest[14 + (4-i)] = ( *((int*) (&uData.rotY)) >> 8*i) & 0xFF;
         dest[18 + (4-i)] = ( *((int*) (&uData.rotZ)) >> 8*i) & 0xFF;
-        dest[22 + (4-i)] = ( *((int*) (&uData.velX)) >> 8*i) & 0xFF;
-        dest[26 + (4-i)] = ( *((int*) (&uData.velY)) >> 8*i) & 0xFF;
-        dest[30 + (4-i)] = ( *((int*) (&uData.velZ)) >> 8*i) & 0xFF;
+        dest[22 + (4-i)] = ( *((int*) (&uData.accelX)) >> 8*i) & 0xFF;
+        dest[26 + (4-i)] = ( *((int*) (&uData.accelY)) >> 8*i) & 0xFF;
+        dest[30 + (4-i)] = ( *((int*) (&uData.accelZ)) >> 8*i) & 0xFF;
     }
 }
 
@@ -54,11 +54,11 @@ void decodeData(SRHeader& header, Event& event, UData& uData, const Payload& des
     uData.rotZ = *((float*)(&temp));
 
     temp = ((0 + dest[23]) << 24) + ((0 + dest[24]) << 16) + ((0 + dest[25]) << 8) + dest[26];
-    uData.velX = *((float*)(&temp));
+    uData.accelX = *((float*)(&temp));
 
     temp = ((0 + dest[27]) << 24) + ((0 + dest[28]) << 16) + ((0 + dest[29]) << 8) + dest[30];
-    uData.velY = *((float*)(&temp));
+    uData.accelY = *((float*)(&temp));
 
     temp = ((0 + dest[31]) << 24) + ((0 + dest[32]) << 16) + ((0 + dest[33]) << 8) + dest[34];
-    uData.velZ = *((float*)(&temp));
+    uData.accelZ = *((float*)(&temp));
 }

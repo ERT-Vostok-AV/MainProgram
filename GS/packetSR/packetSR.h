@@ -1,7 +1,7 @@
 #if !defined(PACKET_SR_H)
 #define PACKET_SR_H
 
-//#include <stdint.h>
+#include <stdint.h>
 
 #define PAYLOAD_SIZE 35
 
@@ -22,9 +22,9 @@ struct UData
     int temperature;
     int battery;
 
-    float velX;
-    float velY;
-    float velZ;
+    float accelX;
+    float accelY;
+    float accelZ;
 
     float rotA;
     float rotX;
@@ -42,4 +42,3 @@ void packData(const SRHeader& header, const Event& event, const UData& uData, Pa
 void decodeData(SRHeader& header, Event& event, UData& uData, const Payload& dest);
 
 #endif // PACKET_SR_H
-
