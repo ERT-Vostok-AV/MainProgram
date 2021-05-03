@@ -301,11 +301,13 @@ void logBuffer() {
 }
 
 void radioTransmission(Event event){
+  /*
   Serial.print(measures.temperature); Serial.print(" ");
   Serial.print(measures.altitude); Serial.print(" ");
   Serial.print(measures.batteryLevel); Serial.print(" ");
-  mpu.printQuat();
+  //mpu.printQuat();
   Serial.println();
+  */
   if (!radio.packSend(event, buffer.back())){ // Send most recent data sample
     buzzer.error();
     // Error sending or packing shit

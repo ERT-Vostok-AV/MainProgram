@@ -40,9 +40,9 @@ bool RadioModule::pack(Event event, FlightData data){
     uData.altitude = (int) data.altitude;
     uData.temperature = (int) data.temperature;
     uData.battery = (int) data.batteryLevel;
-    uData.velX = (float) data.acceleration[0];
-    uData.velY = (float) data.acceleration[1];
-    uData.velZ = (float) data.acceleration[2];
+    uData.accelX = (float) data.acceleration[0];
+    uData.accelY = (float) data.acceleration[1];
+    uData.accelZ = (float) data.acceleration[2];
     uData.rotA = (float) data.rotation[0];
     uData.rotX = (float) data.rotation[1];
     uData.rotY = (float) data.rotation[2];

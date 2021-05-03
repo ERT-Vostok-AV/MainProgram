@@ -5,7 +5,7 @@
 	- Vitesse : m/s
 */
 
-#define LIFT_OFF 10.0
+#define LIFTOFF_ALTITUDE 10.0
 #define APOGEE_DETECTION_THRESHOLD 3
 #define RE_TRIGGER_ALTITUDE 300
 #define TOUCHDOWN_MAX_ALTITUDE 20
@@ -49,7 +49,7 @@ bool EventManager::isTouchDown(double alt, double accelZ){
     }
     lastAlt = alt;
   }
-	return data1; // or data2
+	return res; // or data2
 }
 
 void EventManager::trigger(){

@@ -32,7 +32,7 @@ public:
 private:
     // 16 bit et en [m/s]
     double accelX, accelY, accelZ; //acceleration
-
+    void quatToAngle();
     double rotA, rotX, rotY, rotZ; //rotation
 };
 

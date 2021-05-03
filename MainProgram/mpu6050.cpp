@@ -101,7 +101,7 @@ void Mpu6050::measure(){
  * Convert from quaternion to axis angle
  * @param res : the float table in which the result should be put into
  */
-int Mpu6050::quatToAngle(){
+void Mpu6050::quatToAngle(){
   float angle = acos(q.w) * 2;
   float dividend = sqrt(1 - (q.w * q.w));
   if(dividend < 0.001){ // to avoid division by 0

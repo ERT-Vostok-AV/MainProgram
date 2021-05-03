@@ -22,6 +22,6 @@ private:
     bool triggered;
 	  double maxAlt = 0;
     int stagnation_count = 0;
-    double lastAtl = 0;
+    double lastAlt = 0;
 };
 #endif // EVENT_MANAGER_H
