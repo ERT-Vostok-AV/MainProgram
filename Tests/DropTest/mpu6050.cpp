@@ -35,7 +35,12 @@ float angles[4], euler[3];
 float velX, velY, velZ, accX, accY, accZ;
 double currTimeM, prevTimeM, deltaTimeM;
 
+double aX,aY, aZ, gX, gY, gZ = 0;
+int cnt = 0;
+
 Mpu6050::Mpu6050() : Sensor(SENSOR_ADDR) {}
+
+
 
 /*
  * Initializes the MPU sensor
@@ -57,24 +62,47 @@ int Mpu6050::begin(){
     uint8_t devStatus = mpuC.dmpInitialize();
   
     if(devStatus == 0){
-      mpuC.setXAccelOffset(-2620);
-      mpuC.setYAccelOffset(-1387);
-      mpuC.setZAccelOffset(1262);
-      mpuC.setXGyroOffset(-82);
-      mpuC.setXGyroOffset(23);
-      mpuC.setXGyroOffset(13);
+      
+      mpuC.setXAccelOffset(-2505.74);
+      mpuC.setYAccelOffset(-1383.35);
+      mpuC.setZAccelOffset(1254.78);
+      mpuC.setXGyroOffset(-79.43);
+      mpuC.setXGyroOffset(21.13);
+      mpuC.setXGyroOffset(6.96);
+      
+      
       /*
       mpuC.CalibrateAccel(6);
       mpuC.CalibrateGyro(6);
-      
+
+      cnt++;
+
+      aX += mpuC.getXAccelOffset();
+      aY += mpuC.getYAccelOffset();
+      aZ += mpuC.getZAccelOffset();
       Serial.println(mpuC.getXAccelOffset());
       Serial.println(mpuC.getYAccelOffset());
       Serial.println(mpuC.getZAccelOffset());
 
+      gX += mpuC.getXGyroOffset();
+      gY += mpuC.getYGyroOffset();
+      gZ += mpuC.getZGyroOffset();
       Serial.println(mpuC.getXGyroOffset());
       Serial.println(mpuC.getYGyroOffset());
       Serial.println(mpuC.getZGyroOffset());
+
+      if ( cnt > 20) {
+        Serial.println(aX/cnt);
+        Serial.println(aY/cnt);
+        Serial.println(aZ/cnt);
+
+        Serial.println(gX/cnt);
+        Serial.println(gY/cnt);
+        Serial.println(gZ/cnt);
+      }
       */
+      
+
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);
       packetSize = mpuC.dmpGetFIFOPacketSize();
