@@ -15,7 +15,6 @@ public:
     void reTrigger();
 private:
     int pin;
-
     void bip(int freq, int duration);
 };
 

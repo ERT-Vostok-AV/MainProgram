@@ -2,15 +2,15 @@
 #include "Arduino.h"
 
 /*
- * Constructor: initialize the battery pin as an output
+ * @brief Constructor, initialize the battery pin as an output
  */
 Buzzer::Buzzer(int pin) : pin(pin){
     pinMode(pin, OUTPUT);
   }
 
 /*
- * Produce a beacon sound as 
- * - - - . . . - - - (SOS)
+ * @ brief Produce a beacon sound as 
+ *         - - - . . . - - - (SOS)
  */
 void Buzzer::beacon(){
     // S
@@ -40,8 +40,8 @@ void Buzzer::beacon(){
 }
 
 /*
- * Produces an error sound as :
- * Half a second high pitch note
+ * @brief Produces an error sound as :
+ *        Half a second high pitch note
  */
 void Buzzer::error(){
     bip(3000, 500);
@@ -49,9 +49,9 @@ void Buzzer::error(){
 }
 
 /*
- * Produces a success sound after initialisation as :
- * Two bips lasting a 10th of a second seperated by 
- * a 10th of a seconds
+ *@brief Produces a success sound after initialisation as :
+ *       Two bips lasting a 10th of a second seperated by 
+ *       a 10th of a seconds
  */
 void Buzzer::initSuccess(){
     bip(2000, 100);
@@ -61,8 +61,8 @@ void Buzzer::initSuccess(){
 }
 
 /*
- * Prodcues a bip when the 2nd event has been triggered as:
- * 3 bip of a 10th of a second separated by a 10th of a sec
+ * @brief Prodcues a bip when the 2nd event has been triggered as:
+ *        3 bip of a 10th of a second separated by a 10th of a sec
  */
 void Buzzer::reTrigger(){
     bip(2000, 100);
@@ -73,7 +73,7 @@ void Buzzer::reTrigger(){
 }
 
 /*
- * Porduces a simple bip of a fifth of a second
+ * @brief Porduces a simple bip of a fifth of a second
  */
 void Buzzer::initStart(){
     bip(2000, 200);
@@ -81,7 +81,7 @@ void Buzzer::initStart(){
 }
 
 /*
- * Produces two bips of half a second 
+ * @brief Produces two bips of half a second 
  */
 void Buzzer::liftoff(){
     bip(3000, 500);
@@ -90,9 +90,9 @@ void Buzzer::liftoff(){
 }
 
 /*
- * Produces two long bips separated by a short one
+ * @brief Produces two long bips separated by a short one
  */
-void Buzzer::apogee(){ // _ . _
+void Buzzer::apogee(){ 
     bip(3000, 500);
     delay(300);
     bip(2000, 200);
@@ -101,7 +101,7 @@ void Buzzer::apogee(){ // _ . _
 }
 
 /*
- * Given a frequence and a duration, makes the buzzer bip
+ * @brief Given a frequence and a duration, makes the buzzer bip
  * @param freq : frequence of the bip
  * @parm duration : duration of the bip
  */
