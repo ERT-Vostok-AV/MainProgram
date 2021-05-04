@@ -39,6 +39,6 @@ typedef uint8_t Payload[PAYLOAD_SIZE];
 void packData(const SRHeader& header, const Event& event, const UData& uData, Payload& dest);
 
 //Fonction de decodage pour la GS, faudra peut-etre la traduire dans un autre langage si vous preferez
-void decodeData(SRHeader& header, Event& event, UData& uData, const Payload& dest);
+void decodeData(SRHeader& header, Event& event, UData& uData, const Payload& src);
 
 #endif // PACKET_SR_H
