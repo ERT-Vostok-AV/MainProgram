@@ -58,8 +58,8 @@ RadioModule radio;
 unsigned long currTime, setupEndTime, measureTime, logTime, radioTime;
 unsigned long liftOffTime, apogeeTime, reTriggerTime, touchdownTime; 
 int measureInterval;
-constexpr int radioInterval = 500; // = 2Hz
-constexpr int logInterval = 1000; // = 2Hz
+constexpr int radioInterval = 500; // 500 = 2Hz
+constexpr int logInterval = 1000; // = 1Hz
 
 // Timeout if we get stuck in states before PostFTrans STILL USEFUL ?
 constexpr int flightTimeout = 240000; // = 4 minutes (Check cette valeur) .

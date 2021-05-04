@@ -58,6 +58,7 @@ void setup(){
 }
 
 void loop(){
+  
   mpu.measure();
   mpu.printQuat();
   delay(20);
