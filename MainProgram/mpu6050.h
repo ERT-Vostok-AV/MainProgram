@@ -19,9 +19,6 @@ public:
 
     int begin();
 
-    //pinMode(13, OUTPUT);
-
-    void printQuat();
     double getRotA();
     double getRotX();
     double getRotY();
@@ -29,16 +26,15 @@ public:
     double getAccelX();
     double getAccelY();
     double getAccelZ();
-
-    void getAngle(float* res);
     
     virtual void measure() override;
     
 private:
     // 16 bit et en [m/s]
     double accelX, accelY, accelZ; //acceleration
-    void quatToAngle();
     double rotA, rotX, rotY, rotZ; //rotation
+    
+    void quatToAngle();
 };
 
 #endif // MPU6050_H

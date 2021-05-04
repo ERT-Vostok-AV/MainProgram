@@ -2,11 +2,9 @@
 #include "mpu6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-
 #include "Wire.h"
 #endif
 #include "Arduino.h"
-
 #include <stdio.h>
 
 // Address of the MPU on the i2c bus
@@ -36,7 +34,7 @@ float angles[4], euler[3];
 Mpu6050::Mpu6050() : Sensor(SENSOR_ADDR) {}
 
 /*
- * Initializes the MPU sensor
+ * @brief Initializes the MPU sensor
  */
 int Mpu6050::begin(){
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -73,7 +71,7 @@ int Mpu6050::begin(){
 }
 
 /*
- * Reads the most recent values from the MPU and stores them 
+ * @brief Reads the most recent values from the MPU and stores them 
  */
 void Mpu6050::measure(){
 
@@ -103,8 +101,7 @@ void Mpu6050::measure(){
 }
 
 /*
- * Convert from quaternion to axis angle
- * @param res : the float table in which the result should be put into
+ * @brief Convert from quaternion to axis angle in the local axis-angle array
  */
 void Mpu6050::quatToAngle(){
   float angle = acos(q.w) * 2;
