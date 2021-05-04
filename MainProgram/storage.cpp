@@ -5,8 +5,14 @@
  * 1 SD card init error
  */
 
+/*
+ * @brief Constructor
+ */
 Storage::Storage(){}
 
+/*
+ * @brief Initialses the storage module and writes a header
+ */
 int Storage::begin() {
   if(SD.begin(BUILTIN_SDCARD)){
     dataFile = SD.open("FDATA.txt", FILE_WRITE);
@@ -33,7 +39,10 @@ int Storage::begin() {
   }
 }
 
-
+/*
+ * @brief Save the values from the buffer onto the sd card
+ * @param buffer : Buffer containing the values to be saved
+ */
 bool Storage::saveSD(const Buffer& buffer){
   dataFile = SD.open("FDATA.txt", FILE_WRITE);
   if (dataFile) {
@@ -54,6 +63,41 @@ bool Storage::saveSD(const Buffer& buffer){
   return true;
 }
 
+/*
+ * @brief logs an event into the file
+ * @param event : The event to be logged
+ */
+bool Storage::logEvent(Event event){
+  dataFile = SD.open("FDATA.txt", FILE_WRITE);
+  switch(event){
+    case NO_EVENT :
+      break;
+    case LIFTOFF :
+      dataFile.println("--------------------  LIFTOFF   --------------------");
+      break;  
+    case APOGEE :
+      dataFile.println("--------------------   APOGEE   --------------------");
+      break;
+    case RE_TRIGGER :
+      dataFile.println("-------------------- 2nd Event  --------------------");
+      break;
+    case TOUCHDOWN :
+      dataFile.println("-------------------- TOUCHDOWN  --------------------");
+      break;
+    default:
+      break;
+  }
+  dataFile.close();
+  return true;
+}
+
+/*
+ * @brief Log informations about the flight
+ * @param liftOffTime : time of the liftoff in ms
+ * @param apogeeTime : time of th apogee in ms
+ * @param reTriggerTime : time of 2nd event in ms
+ * @param touchdownTime : time of the touch down in ms
+ */
 bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime){
   dataFile = SD.open("FDATA.txt", FILE_WRITE);
   dataFile.println("--------------- END OF FLIGHT ---------------");
@@ -62,6 +106,8 @@ bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime,
   dataFile.print("Apogee time : "); dataFile.println(apogeeTime / 1000.0);
   dataFile.print("Recovery trigger time : "); dataFile.println(reTriggerTime / 1000.0);
   dataFile.print("Touchdown time : "); dataFile.println(touchdownTime / 1000.0);
+  dataFile.println();
+  dataFile.print("Flight time : "); dataFile.println((touchdownTime - liftOffTime)/1000);
   dataFile.close();
   return true;
 }

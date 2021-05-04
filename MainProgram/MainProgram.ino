@@ -156,6 +156,7 @@ void loop() {
           radioTransmission(LIFTOFF);
           liftOffTime = currTime;
           Serial.println("Ascending");
+          storage.logEvent(LIFTOFF);
           state = Ascending;
         } else {
           radioTransmission(NO_EVENT);
@@ -185,6 +186,7 @@ void loop() {
         if(eventManager.isApogee(buffer.back().altitude)){
           radioTransmission(APOGEE);
           apogeeTime = currTime;
+          storage.logEvent(APOGEE);
           Serial.println("Descending");
           state = Descending;
         } else {
@@ -212,6 +214,7 @@ void loop() {
           reTriggerTime = currTime;
           Serial.println("RE trigger");
           eventManager.trigger();
+          storage.logEvent(RE_TRIGGER);
         }
       }
 
@@ -224,6 +227,7 @@ void loop() {
         if(eventManager.isTouchDown(buffer.back().altitude)){
           radioTransmission(TOUCHDOWN);
           touchdownTime = currTime;
+          storage.logEvent(TOUCHDOWN);
           Serial.println("Postflight trans");
           state = PostFTrans;
         } else if(eventManager.hasTriggered() && !sentTriggerEvent){

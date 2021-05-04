@@ -66,7 +66,7 @@ bool EventManager::isTouchDown(double alt){
     }
   }
   lastAlt = alt;
-	return res & alt < TOUCHDOWN_MAX_ALT; // or data2
+	return res & alt < RE_TRIGGER_ALTITUDE; // or data2
 }
 
 /*
