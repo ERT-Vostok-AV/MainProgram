@@ -11,7 +11,7 @@ Adafruit_BMP280 bmpAda;
 Bmp280::Bmp280() : Sensor(SENSOR_ADDR) {}
 
 /*
- * Initialise the BMP
+ * @brief Initialise the BMP
  */
 int Bmp280::begin() {
     //initialisation et calibration
@@ -29,18 +29,18 @@ int Bmp280::begin() {
 }
 
 /*
- * Reads the values from the BMP, clip them to their interval and store
+ * @brief Reads the values from the BMP, clip them to their interval and store
  */
 void Bmp280::measure(){
-    //Get the altitude and constrains it to the interval [0, 2048]
-    altitude = clip(bmpAda.readAltitude(startPressure), -2048, 2048.0); // A DSICTUER
+    //Get the altitude and constrains it to the interval [-2048, 2048]
+    altitude = clip(bmpAda.readAltitude(startPressure), -2048, 2048.0);
     // Get the temperature and constrains it to the interval [-64, 64]
     temperature = clip(bmpAda.readTemperature(), -64.0, 64.0);
 }
 
 /**
- * Aggregate over a 100 read the current pressure to produce a mean pressure
- * to be used before the fligt
+ * @brief Aggregate over a 100 read the current pressure to produce a mean pressure
+ *        to be used before the fligt
  */
 void Bmp280::getStartPressure(){
     
@@ -53,7 +53,7 @@ void Bmp280::getStartPressure(){
 }
 
 /*
- * Getter for the altitude
+ * @brief Getter for the altitude
  * @return: altitude as a double
  */
 double Bmp280::getAlt() {
@@ -61,7 +61,7 @@ double Bmp280::getAlt() {
 }
 
 /*
- * Getter for the temperature
+ * @brief Getter for the temperature
  * @return the temperature as a double
  */
 double Bmp280::getTemp() {
@@ -69,7 +69,7 @@ double Bmp280::getTemp() {
 }
 
 /**
- * Constrains the value val withing the value lo and hi.
+ * @brief Constrains the value val withing the value lo and hi.
  * @param val double : value to constrain 
  * @param lo  double : lower bound
  * @param hi  double : upper bound
