@@ -19,13 +19,10 @@ public:
     bool pack(Event event, FlightData data);
     bool send();
     bool packSend(Event event, FlightData data);
-    uint8_t* getPackedData();
 
 private:
     SRHeader header;
     Payload payload;
-    bool isLedOn = false;
-    void toggleLed();
 };
 
 #endif // RADIO_MODULE_H

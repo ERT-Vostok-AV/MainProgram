@@ -1,14 +1,14 @@
 #include "radioModule.h"
 
+/**Error codes:
+ * 0 no error
+ * else see xbee doc
+ */
 
+// Xbee serial port 
 #define xbee Serial8
 // Index from the begining of the packet array of the first data byte
 #define PACKET_PAYLOAD_OFFSET 17
-
-/**Error codes:
- * 0 no error
- * 
- */
 
 UData uData;
 Event event;
@@ -22,11 +22,17 @@ uint8_t packet[PACKET_SIZE] = {0x7E, 0x00, 0x31, 0x10, 0x01, 0x00, 0x13, 0xA2, 0
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,       //data
               0x00}; //checksum
 
+/*
+ * @brief constructor
+ */
 RadioModule::RadioModule() {
     header.teamID = VOSTOK;
     header.pktID = 0;
 }
 
+/*
+ * @brief initialize the radio
+ */
 int RadioModule::begin(){
     pinMode(TX_PIN, OUTPUT);
     pinMode(RX_PIN, INPUT);
@@ -36,6 +42,11 @@ int RadioModule::begin(){
     return 0;
 }
 
+/*
+ * @brief Packs the event and puts it into the payload
+ * @param event : event to pack
+ * @param data : data to pack
+ */
 bool RadioModule::pack(Event event, FlightData data){
     uData.altitude = (int) data.altitude;
     uData.temperature = (int) data.temperature;
@@ -47,42 +58,40 @@ bool RadioModule::pack(Event event, FlightData data){
     uData.rotX = (float) data.rotation[1];
     uData.rotY = (float) data.rotation[2];
     uData.rotZ = (float) data.rotation[3];
-    packData(header, event, uData, payload);
     
+    // Pack the data using packetSR
+    packData(header, event, uData, payload);
+
+    // Puts the packed values into the payload and compute checksum
     int sum = 0x471;
     for(int i = 0; i<PAYLOAD_SIZE; i++){
       packet[i+PACKET_PAYLOAD_OFFSET] = payload[i];
       sum = sum + (int)payload[i];
     }
-    
+
+    // Add checksum
     uint8_t sum8bit = (sum & 0b11111111);
     packet[PACKET_SIZE-1] = (255 - sum8bit);
+    // Increment pktID for next packet
     header.pktID = header.pktID + 1;
     
 }
 
-uint8_t* RadioModule::getPackedData(){
-  return packet;
-}
-
+/*
+ * @brief send the packet. Make sure to pack the data into it first
+ */
 bool RadioModule::send(){
     xbee.write(packet, sizeof(packet));
 }
 
+/*
+ * @brief Pack the data and immediately send it
+ * @param event : event to pack and send
+ * @param data : data to pack and send
+ */
 bool RadioModule::packSend(Event event, FlightData data){
     toggleLed();
     pack(event, data);
     send();
     toggleLed();
-}
-
-
-void RadioModule::toggleLed(){
-  if(isLedOn) {
-    //igitalWrite(ledPin, LOW);
-    isLedOn = false;
-  } else {
-    //digitalWrite(ledPin, HIGH);
-    isLedOn = true;
-  }
 }
