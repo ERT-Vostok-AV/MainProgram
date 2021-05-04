@@ -55,8 +55,13 @@ int Mpu6050::begin(){
     uint8_t devStatus = mpuC.dmpInitialize();
   
     if(devStatus == 0){
-      mpuC.CalibrateAccel(6);
-      mpuC.CalibrateGyro(6);
+
+      mpuC.setXAccelOffset(-2505.74);
+      mpuC.setYAccelOffset(-1383.35);
+      mpuC.setZAccelOffset(1254.78);
+      mpuC.setXGyroOffset(-79.43);
+      mpuC.setXGyroOffset(21.13);
+      mpuC.setXGyroOffset(6.96);
       
       Serial.println(F("Enabling DMP.."));
       mpuC.setDMPEnabled(true);

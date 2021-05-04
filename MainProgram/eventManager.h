@@ -12,14 +12,14 @@ class EventManager {
 public:
     EventManager();
 
-    bool isLiftOff(double alt, double accelZ);
-    bool isTouchDown(double alt, double accelZ);
-    bool isApogee(double alt, double accelZ);
+    bool isLiftOff(double alt);
+    bool isTouchDown(double alt);
+    bool isApogee(double alt);
     bool isReTrigger(double alt);
     void trigger();
     bool hasTriggered();
 private:
-    bool triggered;
+    bool triggered = false;
 	  double maxAlt = 0;
     int stagnation_count = 0;
     double lastAlt = -2058.0; //out of bound to make sure it couldn't have been produced by the bmp 

@@ -8,15 +8,16 @@ Tasks :
 
 #include <Vector.h>
 
-#include "flightData.h"
-#include "bmp280.h"
-#include "mpu6050.h"
 #include "batteryIndicator.h"
-#include "eventManager.h"
-#include "storage.h"
-#include "radioModule.h"
+#include "bmp280.h"
 #include "buzzer.h"
+#include "eventManager.h"
+#include "flightData.h"
+#include "mpu6050.h"
 #include "packetSR.h"
+#include "radioModule.h"
+#include "sensor.h"
+#include "storage.h"
 
 #define BUFFER_ELEMENT_COUNT_MAX 120
 
@@ -151,7 +152,7 @@ void loop() {
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().acceleration[3])){  
+        if(eventManager.isLiftOff(buffer.back().altitude)){  
           radioTransmission(LIFTOFF);
           liftOffTime = currTime;
           Serial.println("Ascending");
@@ -181,7 +182,7 @@ void loop() {
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
     
-        if(eventManager.isApogee(buffer.back().altitude, buffer.back().acceleration[3])){
+        if(eventManager.isApogee(buffer.back().altitude)){
           radioTransmission(APOGEE);
           apogeeTime = currTime;
           Serial.println("Descending");
@@ -220,7 +221,7 @@ void loop() {
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
         Serial.println(buffer.back().altitude);
-        if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().acceleration[3])){
+        if(eventManager.isTouchDown(buffer.back().altitude)){
           radioTransmission(TOUCHDOWN);
           touchdownTime = currTime;
           Serial.println("Postflight trans");
@@ -307,15 +308,7 @@ void logBuffer() {
 }
 
 void radioTransmission(Event event){
-  /*
-  Serial.print(measures.temperature); Serial.print(" ");
-  Serial.print(measures.altitude); Serial.print(" ");
-  Serial.print(measures.batteryLevel); Serial.print(" ");
-  //mpu.printQuat();
-  Serial.println();
-  */
   if (!radio.packSend(event, buffer.back())){ // Send most recent data sample
     buzzer.error();
-    // Error sending or packing shit
   }
 }
