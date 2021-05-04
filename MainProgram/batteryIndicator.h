@@ -4,7 +4,6 @@
 /*
 extends sensor
 A class that represents the battery indicator aboard the rocket
-
 */
 
 #include "sensor.h"
