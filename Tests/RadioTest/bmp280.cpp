@@ -1,18 +1,18 @@
 #include "bmp280.h"
 #include <Adafruit_BMP280.h>
 
-/** Error codes:
- * 0 no error
- * 1 bmp sensor error
- */
-
+// Address of the sensor on the I2C bus
+#define SENSOR_ADDR 0x77
+// Number of samples used for the mean of the initial pressure function
+#define N_SAMPLES 100
+// BMP object from adafruit library
 Adafruit_BMP280 bmpAda;
-int nSamples = 100; //nombre d'échantillons pour la calibration de pression
-double arrondiAltitude;
 
+Bmp280::Bmp280() : Sensor(SENSOR_ADDR) {}
 
-Bmp280::Bmp280() : Sensor(0x77) {}
-
+/*
+ * Initialise the BMP
+ */
 int Bmp280::begin() {
     //initialisation et calibration
     if(bmpAda.begin(i2cAddress)){
@@ -28,6 +28,9 @@ int Bmp280::begin() {
     return 1;
 }
 
+/*
+ * Reads the values from the BMP, clip them to their interval and store
+ */
 void Bmp280::measure(){
     //Get the altitude and constrains it to the interval [0, 2048]
     altitude = clip(bmpAda.readAltitude(startPressure), 0.0, 2048.0);
@@ -35,27 +38,42 @@ void Bmp280::measure(){
     temperature = clip(bmpAda.readTemperature(), -64.0, 64.0);
 }
 
+/**
+ * Aggregate over a 100 read the current pressure to produce a mean pressure
+ * to be used before the fligt
+ */
 void Bmp280::getStartPressure(){
     
 	startPressure = 0;
-	for(int i = 0; i < nSamples; i++){
+	for(int i = 0; i < N_SAMPLES; i++){
 		startPressure += bmpAda.readPressure();
 	}
 
-  startPressure /= (nSamples * 100); //division par 100 pour l'avoir en hP
+  startPressure /= (N_SAMPLES * 100); //division par 100 pour l'avoir en hP
 }
 
-//accesseurs
+/*
+ * Getter for the altitude
+ * @return: altitude as a double
+ */
 double Bmp280::getAlt() {
     return altitude;
 }
 
+/*
+ * Getter for the temperature
+ * @return the temperature as a double
+ */
 double Bmp280::getTemp() {
     return temperature;
 }
 
 /**
  * Constrains the value val withing the value lo and hi.
+ * @param val double : value to constrain 
+ * @param lo  double : lower bound
+ * @param hi  double : upper bound
+ * @return the constrained value 
  */
 double Bmp280::clip(double val, double lo, double hi){
   if(val < lo){

@@ -33,7 +33,7 @@ int Bmp280::begin() {
  */
 void Bmp280::measure(){
     //Get the altitude and constrains it to the interval [0, 2048]
-    altitude = clip(bmpAda.readAltitude(startPressure), 0.0, 2048.0);
+    altitude = clip(bmpAda.readAltitude(startPressure), -2048, 2048.0); // A DSICTUER
     // Get the temperature and constrains it to the interval [-64, 64]
     temperature = clip(bmpAda.readTemperature(), -64.0, 64.0);
 }

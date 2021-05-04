@@ -51,15 +51,17 @@ bool Storage::saveSD(const Buffer& buffer){
     }
     dataFile.close();
   }
+  return true;
 }
 
 bool Storage::logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime){
   dataFile = SD.open("FDATA.txt", FILE_WRITE);
   dataFile.println("--------------- END OF FLIGHT ---------------");
   dataFile.println("Flight summary :");
-  dataFile.print("Lift off time : "); dataFile.println(liftOffTime);
-  dataFile.print("Apogee time : "); dataFile.println(apogeeTime);
-  dataFile.print("Recovery trigger time : "); dataFile.println(reTriggerTime);
-  dataFile.print("Touchdown time : "); dataFile.println(touchdownTime);
+  dataFile.print("Lift off time : "); dataFile.println(liftOffTime / 1000.0);
+  dataFile.print("Apogee time : "); dataFile.println(apogeeTime / 1000.0);
+  dataFile.print("Recovery trigger time : "); dataFile.println(reTriggerTime / 1000.0);
+  dataFile.print("Touchdown time : "); dataFile.println(touchdownTime / 1000.0);
   dataFile.close();
+  return true;
 }

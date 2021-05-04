@@ -22,6 +22,6 @@ private:
     bool triggered;
 	  double maxAlt = 0;
     int stagnation_count = 0;
-    double lastAlt = 0;
+    double lastAlt = -2058.0; //out of bound to make sure it couldn't have been produced by the bmp 
 };
 #endif // EVENT_MANAGER_H

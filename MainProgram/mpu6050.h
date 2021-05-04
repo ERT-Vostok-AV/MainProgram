@@ -8,6 +8,9 @@ A class that represents the mpu6050 aboard the rocket
 */
 
 #include "sensor.h"
+#include <Arduino.h>
+
+const int LED_PIN = 13;
 
 class Mpu6050 : public Sensor {
 
@@ -15,6 +18,8 @@ public:
     Mpu6050();
 
     int begin();
+
+    //pinMode(13, OUTPUT);
 
     void printQuat();
     double getRotA();

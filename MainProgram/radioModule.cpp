@@ -70,6 +70,19 @@ bool RadioModule::send(){
 }
 
 bool RadioModule::packSend(Event event, FlightData data){
+    toggleLed();
     pack(event, data);
     send();
+    toggleLed();
+}
+
+
+void RadioModule::toggleLed(){
+  if(isLedOn) {
+    //igitalWrite(ledPin, LOW);
+    isLedOn = false;
+  } else {
+    //digitalWrite(ledPin, HIGH);
+    isLedOn = true;
+  }
 }

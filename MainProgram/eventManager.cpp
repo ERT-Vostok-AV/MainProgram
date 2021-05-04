@@ -5,17 +5,17 @@
 	- Vitesse : m/s
 */
 
-#define LIFTOFF_ALTITUDE 10.0
-#define APOGEE_DETECTION_THRESHOLD 3
-#define RE_TRIGGER_ALTITUDE 300
-#define TOUCHDOWN_MAX_ALTITUDE 20
-#define STAGNATION_REPETITION_COUNT 10
-#define STAGNATION_DIFF_THRESHOLD 0.3
+#define LIFTOFF_ALTITUDE 1.0 //10.0
+#define APOGEE_DETECTION_THRESHOLD 0.5 //3
+#define RE_TRIGGER_ALTITUDE 6.0 //300
+#define TOUCHDOWN_MAX_ALT 3.0
+#define STAGNATION_REPETITION_COUNT 5 // 10
+#define STAGNATION_DIFF_THRESHOLD 0.3 //0.3
 
 EventManager::EventManager() : triggered(false) {}
 
 bool EventManager::isLiftOff(double alt, double accelZ){
-	bool data1 = alt > LIFTOFF_ALTITUDE;
+	bool data1 = (alt > LIFTOFF_ALTITUDE);
 	//bool data2 = accelZ > LIFTOFF_SPEED; // To keep or not to keep ?
 	return data1; // or data2;	// and ou or ?
 }
@@ -35,21 +35,18 @@ bool EventManager::isReTrigger(double alt){
 
 bool EventManager::isTouchDown(double alt, double accelZ){
   bool res = false;
-  if(lastAlt != 0){
+  if(lastAlt != -2058){
     if(abs(lastAlt - alt) <= STAGNATION_DIFF_THRESHOLD ){
       stagnation_count += 1;
-      if(stagnation_count >= 5){ // ou 10 ?
+      if(stagnation_count >= STAGNATION_REPETITION_COUNT){ // ou 10 ?
         res = true;
-      }
-      else{
-        res = false;
       }
     } else {
       stagnation_count = 0;
     }
-    lastAlt = alt;
   }
-	return res; // or data2
+  lastAlt = alt;
+	return res & alt < TOUCHDOWN_MAX_ALT; // or data2
 }
 
 void EventManager::trigger(){

@@ -8,7 +8,7 @@
 #define PACKET_SIZE 53 // 18 byte for the frame and 35 for the payload
 #define RX_PIN 34
 #define TX_PIN 35
-#define XBEE_FREQ 9600
+#define XBEE_FREQ 115200
 
 class RadioModule {
 
@@ -24,6 +24,8 @@ public:
 private:
     SRHeader header;
     Payload payload;
+    bool isLedOn = false;
+    void toggleLed();
 };
 
 #endif // RADIO_MODULE_H

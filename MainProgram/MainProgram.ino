@@ -80,8 +80,8 @@ void radioTranssmission(Event event);
 
 
 void setup() {
-  Serial.begin(9600);
-  while(!Serial);
+  Serial.begin(XBEE_FREQ);
+  //while(!Serial); //-> Attend que le serial soit ouvert ==> NE PAS METTRE EN REMOTE
   Serial.println("Serial monitor ready !");
 
   sentTriggerEvent = false;
@@ -151,10 +151,10 @@ void loop() {
       // 2Hz GS communication & event handling
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-
         if(eventManager.isLiftOff(buffer.back().altitude, buffer.back().acceleration[3])){  
           radioTransmission(LIFTOFF);
           liftOffTime = currTime;
+          Serial.println("Ascending");
           state = Ascending;
         } else {
           radioTransmission(NO_EVENT);
@@ -184,6 +184,7 @@ void loop() {
         if(eventManager.isApogee(buffer.back().altitude, buffer.back().acceleration[3])){
           radioTransmission(APOGEE);
           apogeeTime = currTime;
+          Serial.println("Descending");
           state = Descending;
         } else {
           radioTransmission(NO_EVENT);
@@ -208,6 +209,7 @@ void loop() {
         //Check for the release of the main parachute (2nd event redundancy)
         if(!eventManager.hasTriggered() && eventManager.isReTrigger(measures.altitude)){
           reTriggerTime = currTime;
+          Serial.println("RE trigger");
           eventManager.trigger();
         }
       }
@@ -217,10 +219,11 @@ void loop() {
       // 2Hz GS communication
       if(currTime >= radioTime + radioInterval){
         radioTime += radioInterval;
-        
+        Serial.println(buffer.back().altitude);
         if(eventManager.isTouchDown(buffer.back().altitude, buffer.back().acceleration[3])){
           radioTransmission(TOUCHDOWN);
           touchdownTime = currTime;
+          Serial.println("Postflight trans");
           state = PostFTrans;
         } else if(eventManager.hasTriggered() && !sentTriggerEvent){
           radioTransmission(RE_TRIGGER);
@@ -257,6 +260,7 @@ void loop() {
       // Timeout before beacon
       if(currTime >= (touchdownTime + postFTransTimeout)){
         storage.logFlightInfo(liftOffTime, apogeeTime, reTriggerTime, touchdownTime);
+        Serial.println("Beacon");
         state = Beacon;
       }
 
@@ -270,6 +274,8 @@ void loop() {
     case Beacon:
       buzzer.beacon();
       delay(2000);
+      break;
+      
     default:
       state = Idle; //Shouldn't happen but we never know
       break;
