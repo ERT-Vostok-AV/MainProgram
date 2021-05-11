@@ -19,7 +19,7 @@ Tasks :
 #include "sensor.h"
 #include "storage.h"
 
-#define BUFFER_ELEMENT_COUNT_MAX 120
+#define BUFFER_ELEMENT_COUNT_MAX 130
 
 //Pinout
 #define BATTERY_PIN 14
@@ -59,7 +59,7 @@ RadioModule radio;
 unsigned long currTime, setupEndTime, measureTime, logTime, radioTime;
 unsigned long liftOffTime, apogeeTime, reTriggerTime, touchdownTime; 
 int measureInterval;
-constexpr int radioInterval = 500; // 500 = 2Hz
+constexpr int radioInterval = 200; // 500 = 2Hz
 constexpr int logInterval = 1000; // = 1Hz
 
 // Timeout if we get stuck in states before PostFTrans STILL USEFUL ?
@@ -154,9 +154,12 @@ void loop() {
         radioTime += radioInterval;
         if(eventManager.isLiftOff(buffer.back().altitude)){  
           radioTransmission(LIFTOFF);
+          measures.event = LIFTOFF;
+          buffer.push_back(measures);
+          measures.event = NO_EVENT;
+          
           liftOffTime = currTime;
           Serial.println("Ascending");
-          storage.logEvent(LIFTOFF);
           state = Ascending;
         } else {
           radioTransmission(NO_EVENT);
@@ -186,7 +189,10 @@ void loop() {
         if(eventManager.isApogee(buffer.back().altitude)){
           radioTransmission(APOGEE);
           apogeeTime = currTime;
-          storage.logEvent(APOGEE);
+          measures.event = APOGEE;
+          buffer.push_back(measures);
+          measures.event = NO_EVENT;
+          
           Serial.println("Descending");
           state = Descending;
         } else {
@@ -214,7 +220,9 @@ void loop() {
           reTriggerTime = currTime;
           Serial.println("RE trigger");
           eventManager.trigger();
-          storage.logEvent(RE_TRIGGER);
+          measures.event = RE_TRIGGER;
+          buffer.push_back(measures);
+          measures.event = NO_EVENT;
         }
       }
 
@@ -227,12 +235,15 @@ void loop() {
         if(eventManager.isTouchDown(buffer.back().altitude)){
           radioTransmission(TOUCHDOWN);
           touchdownTime = currTime;
-          storage.logEvent(TOUCHDOWN);
+          measures.event = TOUCHDOWN;
+          buffer.push_back(measures);
+          measures.event = NO_EVENT;
+          
           Serial.println("Postflight trans");
           state = PostFTrans;
         } else if(eventManager.hasTriggered() && !sentTriggerEvent){
           radioTransmission(RE_TRIGGER);
-           sentTriggerEvent = true;
+          sentTriggerEvent = true;
         } else{
           radioTransmission(NO_EVENT);
         }
@@ -291,6 +302,8 @@ void getMeasures() {
   bmp.measure();
   mpu.measure();
   battery.measure();
+
+  measures.timestamp = currTime;
 
   measures.batteryLevel = battery.getBatteryLevel();
   measures.altitude = bmp.getAlt();
