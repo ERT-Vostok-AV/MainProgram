@@ -1,47 +1,45 @@
 #include "buzzer.h"
 
-const int led = 13;
-const int buzPin = 14;
-const int EMPin = 10 ;
-const int burnTime = 2000;
+#define led 13
+#define EMPIN A8
+#define buzPin A9
 
-//Buzzer buzzEclair(buzPin);
+#define burnTime 1000 // ms
+#define timeout 15000 // ms
+
+Buzzer buzzer(buzPin);
 
 void setup() {
-    pinMode(EMPin, OUTPUT);
+    pinMode(EMPIN, OUTPUT);
     pinMode(led, OUTPUT);
 
-    //buzzEclair.error();
+    buzzer.initSuccess();
     digitalWrite(led, HIGH);
+    delay(2000);
+    digitalWrite(led, LOW);
     delay(1000);
-    digitalWrite(led, LOW);
-    
-    delay(5000); //wait 5 sec before sending a current
-    
-    //buzzEclair.initStart();
-    digitalWrite(EMPin, HIGH);
-    digitalWrite(led, HIGH);
+
+    int cnt = 0;
+    while(cnt < 10){
+      flash(100);
+      buzzer.error();
+      delay(1000);
+      cnt += 1;
+    }
+
+    digitalWrite(EMPIN, HIGH);
     delay(burnTime);
-    digitalWrite(EMPin, LOW);
-    digitalWrite(led, LOW);
+    digitalWrite(EMPIN, LOW);
+    digitalWrite(led, HIGH);
+    buzzer.beacon();
+
+}
+
+void flash(int duration){
+  digitalWrite(led, HIGH);
+  delay(duration);
+  digitalWrite(led, LOW);
 }
 
 void loop() {
-  if(millis()-lastTime >= 1000){
-    cnt += 1;
-    if(cnt >= 5){
-      digitalWrite(led, HIGH);
-      //buzz.initSuccess();
-      digitalWrite(EMPin, HIGH);
-      delay(burnTime);
-      digitalWrite(EMPin, LOW);
-      delay(500);
-      digitalWrite(led, LOW);
-      //buzz.initStart();
-      while(1);
-    } else {
-      buzz.error();
-      lastTime = millis();
-    }
-  }
 }

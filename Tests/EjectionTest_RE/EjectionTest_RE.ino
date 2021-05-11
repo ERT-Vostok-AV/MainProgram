@@ -14,7 +14,7 @@ void setup() {
     delay(1000);
 
     int cnt = 0;
-    while(cnt < 5){
+    while(cnt < 10){
       flash(100);
       delay(1000);
       cnt += 1;
