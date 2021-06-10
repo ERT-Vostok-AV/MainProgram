@@ -1,7 +1,7 @@
-#define led 13
+a"#define led 13
 #define EMPIN 10
 
-#define burnTime 1000 // ms
+#define burnTime 2000 // ms
 #define timeout 15000 // ms
 
 void setup() {
@@ -34,4 +34,5 @@ void flash(int duration){
 }
 
 void loop() {
+  delay(1000);
 }

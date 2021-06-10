@@ -90,8 +90,6 @@ bool RadioModule::send(){
  * @param data : data to pack and send
  */
 bool RadioModule::packSend(Event event, FlightData data){
-    toggleLed();
     pack(event, data);
     send();
-    toggleLed();
 }

@@ -20,10 +20,11 @@ public:
 
     //log last data info and closes the data file
     bool logFlightInfo(unsigned long liftOffTime, unsigned long apogeeTime, unsigned long reTriggerTime, unsigned long touchdownTime);
-    bool logEvent(Event event);
 private:
     File dataFile;
     char separator = '\t';
+
+    bool logEvent(Event event);
 };
 
 
