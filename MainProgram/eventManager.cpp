@@ -1,15 +1,15 @@
 #include "eventManager.h"
 
 // Altitude before which liftoff can't happen
-#define LIFTOFF_ALTITUDE 5.0 //5.0
+#define LIFTOFF_ALTITUDE 10.0 //5.0 5?
 // Minimum difference from the highest altitude to declare apogee
-#define APOGEE_DETECTION_THRESHOLD 1 //1 
+#define APOGEE_DETECTION_THRESHOLD 2 //1 
 // Altitude at which the 2nd event should be triggered
-#define RE_TRIGGER_ALTITUDE 270 //270
+#define RE_TRIGGER_ALTITUDE 270.0 //270
 // Number of repetition of close value before touchdown can be declared
 #define STAGNATION_REPETITION_COUNT 10 // ou 10 ?
 // Maximum difference between last altitude to be able to add a stagnation round
-#define STAGNATION_DIFF_THRESHOLD 0.10 //0.3
+#define STAGNATION_DIFF_THRESHOLD 0.30 //0.3
 // Output pin for e-match
 #define E_MATCH_PIN A8
 // Burn time of the e-match (ms)
