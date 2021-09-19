@@ -1,7 +1,7 @@
 #include "eventManager.h"
 
 // Altitude before which liftoff can't happen
-#define LIFTOFF_ALTITUDE 10.0 //5.0 5?
+#define LIFTOFF_ALTITUDE 50.0 //5.0 5?
 // Minimum difference from the highest altitude to declare apogee
 #define APOGEE_DETECTION_THRESHOLD 2 //1 
 // Altitude at which the 2nd event should be triggered

@@ -21,6 +21,7 @@ int Storage::begin() {
 
       //data structure :
       //batteryLevel ; altitude ; temperature ; accelX ; accelY ; accelZ ; rotA ; rotX ; rotY ; rotZ
+      dataFile.print(separator);
       dataFile.print("battery"); dataFile.print(separator);
       dataFile.print("alt"); dataFile.print(separator);
       dataFile.print("temp"); dataFile.print(separator);
